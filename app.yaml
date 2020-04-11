@@ -1,8 +1,19 @@
-runtime: python37
+runtime: python27
+api_version: 1
+threadsafe: yes
 
-beta_settings:
-  cloud_sql_instances: map-cc-assignment:australia-southeast1:ccassign2locationdata
+handlers:
+- url: /
+  script: main.app
 
+libraries:
+- name: MySQLdb
+  version: "latest"
 
-
-
+# [START gae_python_mysql_env]
+env_variables:
+    CLOUDSQL_CONNECTION_NAME: map-cc-assignment:australia-southeast1:ccassign2locationdata
+    CLOUDSQL_USER: davesarkies
+    CLOUDSQL_PASSWORD: password
+    CLOUDSQL_DB: locationdataformaps
+# [END gae_python_mysql_env]
