@@ -3,12 +3,16 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-- url: /
+- url: /.*
   script: main.app
 
 libraries:
 - name: MySQLdb
   version: "latest"
+- name: jinja2
+  version: latest
+- name: webapp2
+  version: latest
 
 # [START gae_python_mysql_env]
 env_variables:

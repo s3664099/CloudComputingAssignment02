@@ -71,21 +71,24 @@ def connect_to_cloudsql():
 class MainPage(webapp2.RequestHandler):
     def get(self):
         """Simple request handler that shows all of the MySQL variables."""
-        self.response.headers['Content-Type'] = 'text/plain'
+
         number = 0
         db = connect_to_cloudsql()
         cursor = db.cursor()
-        cursor.execute("SELECT localename, address FROM place WHERE localtype LIKE 'Pub%' and state = 'NSW'")
+        cursor.execute("SELECT localename, address, state FROM place WHERE localtype LIKE 'Pub%' and state = 'NSW'")
+
+        template_values = {}
 
         for locale, address, state in cursor.fetchall():
             number +=1
-            #self.response.write(str(number)+") "+locale+", "+address+" "+state+"\n")
-
-        template_values = "This is to test the python backend for google cloud"
+            template_values = {
+                "locale": locale,
+                "address": address,
+                "state": state
+            }
 
         template = JINJA_ENVIRONMENT.get_template('index.html')
-        self.response.write(template.render(template_values))        
-
+        self.response.write(template.render(template_values))       
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
