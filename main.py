@@ -21,10 +21,16 @@ For more information, see the README.md.
 
 # [START gae_python_mysql_app]
 import os
+#import urllib
 
 import MySQLdb
 import webapp2
+import jinja2
 
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions=['jinja2.ext.autoescape'],
+    autoescape=True)
 
 # These environment variables are configured in app.yaml.
 CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
@@ -73,7 +79,12 @@ class MainPage(webapp2.RequestHandler):
 
         for locale, address, state in cursor.fetchall():
             number +=1
-            self.response.write(str(number)+") "+locale+", "+address+" "+state+"\n")
+            #self.response.write(str(number)+") "+locale+", "+address+" "+state+"\n")
+
+        template_values = "This is to test the python backend for google cloud"
+
+        template = JINJA_ENVIRONMENT.get_template('index.html')
+        self.response.write(template.render(template_values))        
 
 
 app = webapp2.WSGIApplication([
