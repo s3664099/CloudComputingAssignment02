@@ -5,6 +5,8 @@
 		<title>First Page</title>
 	</head>
 	<body>
+		<!-- This is the form, The action tag is where the information is stored
+		so that the back end knows what function to call when the submit button is pressed -->
 		<form action="/search" method = "post">
 			<select name = "type">
 				<option value = "All">Everything</option>
@@ -15,12 +17,10 @@
 				<option value = "Books">Bookshop</option>
 			</select>
 			<select name = "suburb">
-				<option value = "Richmond">Richmond</option>
-				<option value = "Northcote">Northcote</option>
-				<option value = "Fitzroy">Fitzroy</option>
-				<option value = "Prahran">Prahran</option>
-				<option value = "Preston">Preston</option>
-				<option value = "Sunbury">Sunbury</option>
+				<!-- This creates a list of all the towns stored in the database (in Victoria) -->
+				{% for town in towns%}
+				<option value = "{{town.town}}">{{town.town}}</option>
+				{% endfor %}
 			</select>
 			<input type = "submit" value="Search">
 		</form>
@@ -35,17 +35,24 @@
 				<th>State</th>
 				<th>Type</th>
 			</tr>
+		<!-- This is where the 'code' for jinja occurs. {$ for for executing code -->
+			<!-- whereas the double brackets is for a print statement. Here we are going through each of the -->
+			<!-- entries in the location dictionary that was passed through by the template-->
 		{% for location in location_details %}
 			<tr>
+				<!-- This here calls an icon from cloud storage -->
+				<td><img src="https://storage.cloud.google.com/map-icons-cca02/icons/{{location.localtype}}?authuser=1"height = "40", width="40" /></td>
+
+				<!--This is diplaying the local data passed through from the template -->
 				<td><b>{{location.locale}}</b></td>
 				<td>{{location.address}}</td>
 				<td>{{location.telephone}}</td>
-				<td><img src="https://storage.cloud.google.com/map-icons-cca02/icons/{{location.localtype}}?authuser=1"height = "40", width="40" /></td>
+				<td><img src ="https://storage.cloud.google.com/map-icons-cca02/icons/{{location.localtype1}}?authuser=1" height = "40", width="40"/></td>
 				<td><b>{{location.locale1}}</b></td>
 				<td>{{location.address1}}</td>
 				<td>{{location.telephone1}}</td>
-				<td><img src ="https://storage.cloud.google.com/map-icons-cca02/icons/{{location.localtype}}?authuser=1" height = "40", width="40"/></td>
-			</tr>	
+			</tr>
+		<!-- like BASH script, you need to tell the template where the for loop ends -->	
 		{% endfor %}
 		</table>
 	</body>
