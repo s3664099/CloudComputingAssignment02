@@ -38,6 +38,10 @@ CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
 CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
 CLOUDSQL_DB = os.environ.get('CLOUDSQL_DB')
 
+class search ():
+    locale_type = "All"
+    locale_place = "Sunbury"
+
 
 def connect_to_cloudsql():
     # When deployed to App Engine, the `SERVER_SOFTWARE` environment variable
@@ -72,26 +76,77 @@ class MainPage(webapp2.RequestHandler):
     def get(self):
         """Simple request handler that shows all of the MySQL variables."""
 
+        template_values = {}
+
+        if search.locale_type != "":
+            template_values = MainPage.perform_search(self)
+
+        template = JINJA_ENVIRONMENT.get_template('index.html')
+        self.response.write(template.render(template_values))
+
+    def perform_search(self):
+
+        locale_type = search.locale_type
+        locale_place = search.locale_place
+
         number = 0
         db = connect_to_cloudsql()
         cursor = db.cursor()
-        cursor.execute("SELECT localename, address, state FROM place WHERE localtype LIKE 'Pub%' and state = 'NSW'")
+        if locale_type == 'All':
+            cursor.execute("SELECT localename, address, telephone, localtype FROM place WHERE town = '"+locale_place+"' and state = 'Vic' LIMIT 20")
+        else:
+            cursor.execute("SELECT localename, address, telephone, localtype FROM place WHERE localtype ='"+locale_type+"' and town = '"+locale_place+"' and state = 'Vic' LIMIT 20")
 
+        locations = []
+        location_details = {}
         template_values = {}
 
-        for locale, address, state in cursor.fetchall():
+        for locale, address, telephone, localtype in cursor.fetchall():
             number +=1
-            template_values = {
-                "locale": locale,
-                "address": address,
-                "state": state
-            }
 
-        template = JINJA_ENVIRONMENT.get_template('index.html')
-        self.response.write(template.render(template_values))       
+            if number == 1:
+                location_details = {
+                    "locale": locale,
+                    "address": address,
+                    "telephone": telephone,
+                    "localtype": localtype,
+                    "locale1": " ",
+                    "address1": " ",
+                    "state1": " ",
+                    "localtype1": " "
+                }
+            else:
+                location_details.update({"locale1" : locale})
+                location_details.update({"address1": address})
+                location_details.update({"telephone1": telephone})
+                location_details.update({"localtype1": localtype})
+                locations.append(location_details) 
+                number = 0
+
+        for location in locations:
+            cursor.execute("SELECT icon, localtype FROM localtype WHERE localtype = '"+str(location.get("localtype"))+"'")
+            for icon, localtype in cursor.fetchall():
+                location.update({"localtype": icon})
+            cursor.execute("SELECT icon, localtype FROM localtype WHERE localtype = '"+str(location.get("localtype1"))+"'")
+            for icon, localtype in cursor.fetchall():
+                location.update({"localtype1": icon})
+
+        template_values = {
+           'location_details': locations,
+        }           
+        return template_values
+
+class Search(webapp2.RequestHandler):
+    def post(self):
+
+        search.locale_type = self.request.get('type')
+        search.locale_place = self.request.get('suburb')
+        self.redirect('/')
+
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
+    ('/search', Search)
 ], debug=True)
 
 # [END gae_python_mysql_app]

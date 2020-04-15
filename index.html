@@ -5,9 +5,50 @@
 		<title>First Page</title>
 	</head>
 	<body>
-		<h2>{{locale}}</h2>
-		<b>Address: </b>{{address}}</br>
-		<b>State: </b>{{state}}</br>
+		<form action="/search" method = "post">
+			<select name = "type">
+				<option value = "All">Everything</option>
+				<option value = "Pub/Bar">Pub/Bar</option>
+				<option value = "Restaurant, Asian">Asian Restaurant</option>
+				<option value = "Restaurant, American">Burger Bar</option>
+				<option value = "Cafe">Cafe</option>
+				<option value = "Books">Bookshop</option>
+			</select>
+			<select name = "suburb">
+				<option value = "Richmond">Richmond</option>
+				<option value = "Northcote">Northcote</option>
+				<option value = "Fitzroy">Fitzroy</option>
+				<option value = "Prahran">Prahran</option>
+				<option value = "Preston">Preston</option>
+				<option value = "Sunbury">Sunbury</option>
+			</select>
+			<input type = "submit" value="Search">
+		</form>
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>Address</th>
+				<th>Telephone</th>
+				<th>Type</th>
+				<th>Name</th>
+				<th>Telephone</th>
+				<th>State</th>
+				<th>Type</th>
+			</tr>
+		{% for location in location_details %}
+			<tr>
+				<td><b>{{location.locale}}</b></td>
+				<td>{{location.address}}</td>
+				<td>{{location.telephone}}</td>
+				<td><img src="https://storage.cloud.google.com/map-icons-cca02/icons/{{location.localtype}}?authuser=1"height = "40", width="40" /></td>
+				<td><b>{{location.locale1}}</b></td>
+				<td>{{location.address1}}</td>
+				<td>{{location.telephone1}}</td>
+				<td><img src ="https://storage.cloud.google.com/map-icons-cca02/icons/{{location.localtype}}?authuser=1" height = "40", width="40"/></td>
+			</tr>	
+		{% endfor %}
+		</table>
 	</body>
 </html>
 {% endautoescape %}
+
