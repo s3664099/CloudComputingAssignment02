@@ -102,69 +102,32 @@ class MainPage(webapp2.RequestHandler):
     def perform_search(self):
 
         #Set up the values to be used in this function
-        locale_type = search.locale_type
-        locale_place = search.locale_place
         locations = []
         location_details = {}
         template_values = {}
-        towns = []
 
-        number = 0
         db = connect_to_cloudsql()
         #MainPage.database_manip(self, db)
 
         #Sets up the function that performs the searches and stores the results
         #The queries are below.
         cursor = db.cursor()
-        if locale_type == 'All':
-            cursor.execute("SELECT localename, address, telephone, localtype FROM place WHERE town = '"+locale_place+"' and state = 'Vic' LIMIT 20")
-        else:
-            cursor.execute("SELECT localename, address, telephone, localtype FROM place WHERE localtype ='"+locale_type+"' and town = '"+locale_place+"' and state = 'Vic' LIMIT 20")
+        cursor.execute("SELECT place.x_coord, place.y_coord, localtype.icon FROM place INNER JOIN localtype ON place.localtype=localtype.localtype")
 
         #Now that we have performed the queries, the results are processed and stored
         #in the dictionary which is then passed back to the main function
-        for locale, address, telephone, localtype in cursor.fetchall():
-            number +=1
+        for x_coord, y_coord, icon in cursor.fetchall():
 
-            if number == 1:
-                location_details = {
-                    "locale": locale,
-                    "address": address,
-                    "telephone": telephone,
-                    "localtype": localtype,
-                    "locale1": " ",
-                    "address1": " ",
-                    "state1": " ",
-                    "localtype1": " "
+            location_details = {
+                "x_coord": x_coord,
+                "y_coord": y_coord,
+                "icon": icon
                 }
-            else:
-                location_details.update({"locale1" : locale})
-                location_details.update({"address1": address})
-                location_details.update({"telephone1": telephone})
-                location_details.update({"localtype1": localtype})
-                locations.append(location_details) 
-                number = 0
-
-        for location in locations:
-            cursor.execute("SELECT icon, localtype FROM localtype WHERE localtype = '"+str(location.get("localtype"))+"'")
-            for icon, localtype in cursor.fetchall():
-                location.update({"localtype": icon})
-            cursor.execute("SELECT icon, localtype FROM localtype WHERE localtype = '"+str(location.get("localtype1"))+"'")
-            for icon, localtype in cursor.fetchall():
-                location.update({"localtype1": icon})
-
-        cursor.execute("SELECT town, state FROM location WHERE state = 'Vic'")
-
-        for town, state in cursor.fetchall():
-            town_details = {
-                "town": town,
-            }
-            towns.append(town_details)
+            locations.append(location_details) 
 
         #The results are stored in the template values for use on the webpage
         template_values = {
-           'location_details': locations,
-           'towns': towns
+           'location_details': locations
         }           
         return template_values
 
