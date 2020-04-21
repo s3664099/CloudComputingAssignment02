@@ -225,6 +225,7 @@ class Login(webapp2.RequestHandler):
             pwdhash = binascii.hexlify(pwdhash).decode('ascii')
 
             if (pwdhash == storedPass):
+                # Redirect to wherever needed.
                 self.response.out.write("Password correct!")
             else:
                 emplate = JINJA_ENVIRONMENT.get_template('login.html')
@@ -240,6 +241,7 @@ class SignUpPage(webapp2.RequestHandler):
         self.response.write(template.render())
 
     def post(self):
+        # Check for form errors.
         isError = False
 
         firstName = self.request.get('firstname')
@@ -259,6 +261,7 @@ class SignUpPage(webapp2.RequestHandler):
         email = self.request.get('email')
         emailError = ""
         
+        # Will need to add regex check.
         if (email == ""):
             emailError = "Please enter a valid email address."
             isError = True
@@ -294,14 +297,17 @@ class SignUpPage(webapp2.RequestHandler):
                 # https://www.vitoshacademy.com/hashing-passwords-in-python/
                 salt = hashlib.sha256(os.urandom(20)).hexdigest().encode('ascii')
 
+                # Hashing password with the salt.
                 pHash = hashlib.pbkdf2_hmac('sha256', password.encode("utf-8"), salt, 100000)
                 hashedPass = binascii.hexlify(pHash)
 
+                # Creating Datastore entity.
                 newUser = User(id = hasher.hexdigest(), firstName = firstName, surname = surname, email = email, password = hashedPass, salt = salt)
                 newUser.put()
                 template = JINJA_ENVIRONMENT.get_template('login.html')
                 self.response.write(template.render(message = "Your account was created! Sign in below."))
             else:
+                # Display error if there is already an account.
                 emailError = "There is already an account associated with that email address."
                 template = JINJA_ENVIRONMENT.get_template('signup.html')
                 self.response.write(template.render(firstNameError = firstNameError, surnameError = surnameError, 
