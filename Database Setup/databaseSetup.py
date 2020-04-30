@@ -231,7 +231,7 @@ def loadDataFile(conn):
 		conn.commit()
 
 
-def extraData(conn):
+def extraTables(conn):
 	cur = conn.cursor()
 
 	try:
@@ -279,6 +279,8 @@ def extraData(conn):
 					PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (x_coord, y_coord) REFERENCES place(x_coord, y_coord))")
 	except pymysql.Error as e:
 		print("Error infoTakeaway: ",e)
+
+
 
 		
 #This function exists to test that the contents of the database were updated sufficiently
