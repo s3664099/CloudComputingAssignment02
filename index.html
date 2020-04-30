@@ -29,15 +29,31 @@
 	      var map = new google.maps.Map(
 	      	document.getElementById('map'), {zoom: 8, center: {lat: -37.9604037, lng:144.7027854}});
 	      map.setOptions({styles: styles['hide']})
-
+		
+		// Attempt to get user location using HTML geolocation.
 		  if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(function (position) {
 					var pos = {
               			lat: position.coords.latitude,
               			lng: position.coords.longitude
             		};
+				// Drop a marker on user's location.
 				var marker = new google.maps.Marker({position: pos, map: map});
-				locationStatusText.innerHTML = "Got location."
+				var requestUrl = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.lat + "," + pos.lng + "&result_type=street_address&key=AIzaSyD73D9Hbv3ln13MkAyLSpcw6xKI5KdQ95w";
+				console.log(requestUrl);
+				
+				// Request information about the coordinates.
+				var req = new XMLHttpRequest();
+  				req.open('GET', requestUrl, false);
+  				req.send(null);
+
+				// Parse response as JSON.
+				var myObj = JSON.parse(req.responseText);
+
+				// Extract the first street address of the result.
+				var address = myObj.results[0].formatted_address;
+
+				locationStatusText.innerHTML = "Got location. " + address;
 				});
 			} else {
 				locationStatusText.innerHTML = "Failed to get location.";
