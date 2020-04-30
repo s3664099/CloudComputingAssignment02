@@ -20,7 +20,9 @@
     </style>
   </head>
   <body>
+  	<div id="locationStatus"></div>
     <div id="map"></div>
+	
     <script>
     	function initMap() {
 	      var map = new google.maps.Map(
@@ -50,7 +52,22 @@
 	  		stylers: [{visibility: 'off'}]
 	  	}]
 	  };
+
+	  function getLocation() {
+	
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(showLocation); 
+			} else {
+				locationStatusText.innerHTML = "Failed to get location.";
+			}
+		}
+
+		function showLocation(location) {
+			locationStatusText = document.getElementById("locationStatus");
+			locationStatusText.innerHTML = "Latitude: " + location.coords.latitude + ", Longitude: " + location.coords.longitude; 
+		}
     </script>
+	<script>getLocation();</script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD73D9Hbv3ln13MkAyLSpcw6xKI5KdQ95w&callback=initMap"
     async defer></script>
   </body>
