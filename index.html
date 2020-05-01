@@ -1,61 +1,93 @@
 <!DOCTYPE html>
 {% autoescape true %}
 <html>
-	<head>
-		<title>First Page</title>
-	</head>
-	<body>
-		<!-- This is the form, The action tag is where the information is stored
-		so that the back end knows what function to call when the submit button is pressed -->
-		<form action="/search" method = "post">
-			<select name = "type">
-				<option value = "All">Everything</option>
-				<option value = "Pub/Bar">Pub/Bar</option>
-				<option value = "Restaurant, Asian">Asian Restaurant</option>
-				<option value = "Restaurant, American">Burger Bar</option>
-				<option value = "Cafe">Cafe</option>
-				<option value = "Books">Bookshop</option>
-			</select>
-			<select name = "suburb">
-				<!-- This creates a list of all the towns stored in the database (in Victoria) -->
-				{% for town in towns%}
-				<option value = "{{town.town}}">{{town.town}}</option>
-				{% endfor %}
-			</select>
-			<input type = "submit" value="Search">
-		</form>
-		<table>
-			<tr>
-				<th>Name</th>
-				<th>Address</th>
-				<th>Telephone</th>
-				<th>Type</th>
-				<th>Name</th>
-				<th>Telephone</th>
-				<th>State</th>
-				<th>Type</th>
-			</tr>
-		<!-- This is where the 'code' for jinja occurs. {$ for for executing code -->
-			<!-- whereas the double brackets is for a print statement. Here we are going through each of the -->
-			<!-- entries in the location dictionary that was passed through by the template-->
-		{% for location in location_details %}
-			<tr>
-				<!-- This here calls an icon from cloud storage -->
-				<td><img src="https://storage.cloud.google.com/map-icons-cca02/icons/{{location.localtype}}?authuser=1"height = "40", width="40" /></td>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+  	<div id="locationStatus"></div>
+    <div id="map"></div>
+	
+    <script>
+    	function initMap() {
+		  locationStatusText = document.getElementById("locationStatus");
+	      var map = new google.maps.Map(
+	      	document.getElementById('map'), {zoom: 8, center: {lat: -37.9604037, lng:144.7027854}});
+	      map.setOptions({styles: styles['hide']})
+		
+		// Attempt to get user location using HTML geolocation.
+		  if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function (position) {
+					var pos = {
+              			lat: position.coords.latitude,
+              			lng: position.coords.longitude
+            		};
+				// Drop a marker on user's location.
+				var marker = new google.maps.Marker({position: pos, map: map});
+				var requestUrl = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.lat + "," + pos.lng + "&result_type=street_address&key=AIzaSyD73D9Hbv3ln13MkAyLSpcw6xKI5KdQ95w";
+				console.log(requestUrl);
+				
+				// Request information about the coordinates.
+				var req = new XMLHttpRequest();
+  				req.open('GET', requestUrl, false);
+  				req.send(null);
 
-				<!--This is diplaying the local data passed through from the template -->
-				<td><b>{{location.locale}}</b></td>
-				<td>{{location.address}}</td>
-				<td>{{location.telephone}}</td>
-				<td><img src ="https://storage.cloud.google.com/map-icons-cca02/icons/{{location.localtype1}}?authuser=1" height = "40", width="40"/></td>
-				<td><b>{{location.locale1}}</b></td>
-				<td>{{location.address1}}</td>
-				<td>{{location.telephone1}}</td>
-			</tr>
-		<!-- like BASH script, you need to tell the template where the for loop ends -->	
-		{% endfor %}
-		</table>
-	</body>
+				// Parse response as JSON.
+				var myObj = JSON.parse(req.responseText);
+
+				// Extract the first street address of the result.
+				var address = myObj.results[0].formatted_address;
+
+				locationStatusText.innerHTML = "Got location. " + address;
+				});
+			} else {
+				locationStatusText.innerHTML = "Failed to get location.";
+			}
+		
+	      {% for location in location_details %}
+	      x_coord = {{location.x_coord}};
+	      y_coord = {{location.y_coord}};
+	      icon = "{{location.icon}}";
+	      var image = {
+	  		url: 'https://storage.googleapis.com/map-icons-cca02/icons/'+icon+'?authuser=2',
+	  		scaledSize: new google.maps.Size(40,40),
+	  		origin: new google.maps.Point(0,0),
+	  		anchor: new google.maps.Point(0,32)
+	  	  };
+	      var marker = new google.maps.Marker({position: {lat: x_coord, lng: y_coord }, 
+	      	map: map,
+	      	icon: image
+	      })
+	      {% endfor %}
+	  }
+	  var styles = {
+	  	default: null,
+	  	hide: [
+	  	{
+	  		featureType: 'poi',
+	  		stylers: [{visibility: 'off'}]
+	  	}]
+	  };
+		
+    </script>
+	
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD73D9Hbv3ln13MkAyLSpcw6xKI5KdQ95w&callback=initMap"
+    async defer></script>
+  </body>
 </html>
 {% endautoescape %}
-
