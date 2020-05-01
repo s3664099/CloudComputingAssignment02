@@ -20,15 +20,30 @@
     </style>
   </head>
   <body>
-  	<div id="locationStatus"></div>
+
+  	<div id="topBar">
+	  
+	  {% if user is not none%}
+	  	<p id="signInStatus">Signed in as: {{user}}</p>
+		<form action="\signout"><input type="submit" value="Sign Out"></form>
+	  {% else %}
+		<form action="\signup"><input type="submit" value="Sign Up"></form>
+		<form action="\login"><input type="submit" value="Login"></form>
+		<p id="signInStatus">Not signed in.</p>
+	  {% endif %}
+	  <p id="locationStatus"></p>
+	</div>
+
     <div id="map"></div>
 	
     <script>
     	function initMap() {
 		  locationStatusText = document.getElementById("locationStatus");
 	      var map = new google.maps.Map(
-	      	document.getElementById('map'), {zoom: 15, center: {lat: -37.9604037, lng:144.7027854}});
+	      	document.getElementById('map'), {zoom: 8, center: {lat: -37.9604037, lng:144.7027854}});
 	      map.setOptions({styles: styles['hide']})
+		
+		// Attempt to get user location using HTML geolocation.
 
 		  if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(function (position) {
@@ -36,8 +51,25 @@
               			lat: position.coords.latitude,
               			lng: position.coords.longitude
             		};
+
+				// Drop a marker on user's location.
 				var marker = new google.maps.Marker({position: pos, map: map});
-				locationStatusText.innerHTML = "Got location."
+				var requestUrl = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.lat + "," + pos.lng + "&result_type=street_address&key=AIzaSyD73D9Hbv3ln13MkAyLSpcw6xKI5KdQ95w";
+				console.log(requestUrl);
+				
+				// Request information about the coordinates.
+				var req = new XMLHttpRequest();
+  				req.open('GET', requestUrl, false);
+  				req.send(null);
+
+				// Parse response as JSON.
+				var myObj = JSON.parse(req.responseText);
+
+				// Extract the first street address of the result.
+				var address = myObj.results[0].formatted_address;
+
+				locationStatusText.innerHTML = "Got location. " + address;
+
 				});
 			} else {
 				locationStatusText.innerHTML = "Failed to get location.";
@@ -49,6 +81,7 @@
 	      icon = "{{location.icon}}";
 	      var image = {
 	  		url: 'https://storage.googleapis.com/map-icons-cca02/icons/'+icon+'?authuser=2',
+
 	  		scaledSize: new google.maps.Size(20,20),
 	  		origin: new google.maps.Point(0,0),
 	  		anchor: new google.maps.Point(0,32)
@@ -75,4 +108,3 @@
   </body>
 </html>
 {% endautoescape %}
-

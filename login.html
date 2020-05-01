@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% autoescape true %}
+
+<html>
+    <body>
+        <div>
+        <form action="/login" method="post">
+            <label>{{message}}</label><br>
+            <label>Email:</label><br>
+            <input type="text" name="email"><br>
+            <label>Password:</label><br>
+            <input type="password" name="password"><br>
+            <input type="submit" value="Sign In">
+        </form>
+        </div>
+    </body>
+</html>
+
+{% endautoescape %}
