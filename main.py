@@ -164,6 +164,7 @@ class MainPage(BaseHandler):
             locations.append(location_details) 
 
         #The results are stored in the template values for use on the webpage
+
         template_values['location_details'] = locations
            
         return template_values
