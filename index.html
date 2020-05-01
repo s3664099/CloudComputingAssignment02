@@ -20,7 +20,19 @@
     </style>
   </head>
   <body>
-  	<div id="locationStatus"></div>
+  	<div id="topBar">
+	  
+	  {% if user is not none%}
+	  	<p id="signInStatus">Signed in as: {{user}}</p>
+		<form action="\signout"><input type="submit" value="Sign Out"></form>
+	  {% else %}
+		<form action="\signup"><input type="submit" value="Sign Up"></form>
+		<form action="\login"><input type="submit" value="Login"></form>
+		<p id="signInStatus">Not signed in.</p>
+	  {% endif %}
+	  <p id="locationStatus"></p>
+	</div>
+
     <div id="map"></div>
 	
     <script>

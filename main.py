@@ -30,6 +30,8 @@ import MySQLdb
 import webapp2
 import jinja2
 
+from webapp2_extras import sessions
+
 #This function sets up the jinj enviroment
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -87,9 +89,29 @@ def connect_to_cloudsql():
 
     return db
 
+# https://stackoverflow.com/a/12737074
+# Maintains session data.
+
+class BaseHandler(webapp2.RequestHandler):
+    def dispatch(self):
+        # Get a session store for this request.
+        self.session_store = sessions.get_store(request=self.request)
+
+        try:
+            # Dispatch the request.
+            webapp2.RequestHandler.dispatch(self)
+        finally:
+            # Save all sessions.
+            self.session_store.save_sessions(self.response)
+
+    @webapp2.cached_property
+    def session(self):
+        # Returns a session using the default cookie key.
+        return self.session_store.get_session()
+
 #This class is the main page handler. The code in this class processes what gets placed
 #Onto the HTML file.
-class MainPage(webapp2.RequestHandler):
+class MainPage(BaseHandler):
 
     #The get function, while it sounds odd, the get is actually being called
     #from the HTML file as opposed to this file.
@@ -102,6 +124,10 @@ class MainPage(webapp2.RequestHandler):
 
         if search.locale_type != "":
             template_values = MainPage.perform_search(self)
+
+        userKey = self.session.get('user')
+        template_values['user'] = userKey
+
 
         #This code sends the template values to the HTML file.
         #The first line sets up the template values, the second line renders the webpage.
@@ -138,9 +164,8 @@ class MainPage(webapp2.RequestHandler):
             locations.append(location_details) 
 
         #The results are stored in the template values for use on the webpage
-        template_values = {
-           'location_details': locations
-        }           
+        template_values['location_details'] = locations
+           
         return template_values
 
 #This is the handler for recieving data from the webpage.
@@ -156,7 +181,7 @@ class Search(webapp2.RequestHandler):
         #The program is then sent to the MainPage to update the page
         self.redirect('/')
 
-class Login(webapp2.RequestHandler):
+class Login(BaseHandler):
 
     def get(self):
 
@@ -172,6 +197,7 @@ class Login(webapp2.RequestHandler):
         hasher.update(enteredEmail)
         hashedEmail = hasher.hexdigest()
 
+        # Constructing key to get user details.
         user_key = ndb.Key("User", hashedEmail)
         user = user_key.get()
 
@@ -189,12 +215,11 @@ class Login(webapp2.RequestHandler):
 
             if (pwdhash == storedPass):
                 # Redirect to wherever needed.
+                self.session['user'] = hashedEmail
                 self.redirect('/')
             else:
                 template = JINJA_ENVIRONMENT.get_template('login.html')
                 self.response.write(template.render(message = "Your password was incorrect."))
-
-
 
 class SignUpPage(webapp2.RequestHandler):
 
@@ -275,13 +300,24 @@ class SignUpPage(webapp2.RequestHandler):
                 template = JINJA_ENVIRONMENT.get_template('signup.html')
                 self.response.write(template.render(firstNameError = firstNameError, surnameError = surnameError, 
                 emailError = emailError, passwordError = passwordError))
+
+class SignOut(BaseHandler):
+    def get(self):
+        self.session['user'] = None
+        self.redirect('/')
     
 #This function defines where data is to go. 
+config = {}
+config['webapp2_extras.sessions'] = {
+    'secret_key': 'test',
+}
+
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/search', Search),
     ('/login', Login),
-    ('/signup', SignUpPage)
-], debug=True)
+    ('/signup', SignUpPage),
+    ('/signout', SignOut)
+], debug=True, config=config)
 
 # [END gae_python_mysql_app]
