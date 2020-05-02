@@ -20,9 +20,22 @@
     </style>
   </head>
   <body>
-  	<div id="locationStatus"></div>
+
+  	<div id="topBar">
+	  
+	  {% if user is not none%}
+	  	<p id="signInStatus">Signed in as: {{user}}</p>
+		<form action="\signout"><input type="submit" value="Sign Out"></form>
+	  {% else %}
+		<form action="\signup"><input type="submit" value="Sign Up"></form>
+		<form action="\login"><input type="submit" value="Login"></form>
+		<p id="signInStatus">Not signed in.</p>
+	  {% endif %}
+	  <p id="locationStatus"></p>
+	</div>
+
     <div id="map"></div>
-	
+
 	<!-- source: https://stackoverflow.com/questions/21956500/use-jinja2-template-engine-in-external-javascript-file -->
     <script>{% include 'template.js' %}</script>
     <script src="js/script.js"></script>
@@ -32,4 +45,3 @@
   </body>
 </html>
 {% endautoescape %}
-
