@@ -1,4 +1,8 @@
-var markers = new Array()
+var markers = new Array();
+var iconSize = false;
+var iconShown = false;
+var smallIcon = 20;
+var largeIcon = 40;
 
 function initMap() {
   locationStatusText = document.getElementById("locationStatus");
@@ -21,21 +25,34 @@ function initMap() {
 
 	for (i = 0; i < locations.length; i++) {
 
-	    var image = {
-	  		url: 'https://storage.googleapis.com/map-icons-cca02/icons/'+locations[i].icon+'?authuser=2',
-	  		scaledSize: new google.maps.Size(20,20),
-	  		origin: new google.maps.Point(0,0),
-	  		anchor: new google.maps.Point(0,32)
-		};
+	    var image = setIcons(locations[i].icon, smallIcon);
 	    var marker = new google.maps.Marker({position: {lat: locations[i].x_coord, lng: locations[i].y_coord }, 
 	      	map: map,
 	      	icon: image
 	    })
-	    markers.push(marker)
+	    marker.setMap(null);
+	    markers.push(marker);
 	}
 
-    console.log(markers.length);
+	map.addListener('zoom_changed', function() {
+		zoom = map.getZoom();
+
+		if (zoom >14 && zoom < 18 && iconShown == false && iconSize == true) {
+			setIconImage(true)
+			setMapOnAll(map);
+			iconSize = false;
+			iconShown = true;
+		} else if (zoom >17 && iconSize == false) {
+			setIconImage(false)
+			setMapOnAll(map);
+			iconSize = true
+		} else if (zoom <15) {
+			setMapOnAll(null);
+			iconShown = false;
+		}
+	});
 }
+
 var styles = {
   	default: null,
  	hide: [
@@ -44,4 +61,37 @@ var styles = {
   		stylers: [{visibility: 'off'}]
   	}]
 };
-	
+
+function setIcons(icon, size) {
+
+	var image = {
+	  		url: 'https://storage.googleapis.com/map-icons-cca02/icons/'+icon+'?authuser=2',
+	  		scaledSize: new google.maps.Size(size,size),
+	  		origin: new google.maps.Point(0,0),
+	  		anchor: new google.maps.Point(0,32)
+		};
+	return image;
+}
+
+function setIconImage(size) {
+
+	iconSize = largeIcon;
+
+	if(size) {
+		iconSize = smallIcon;
+	}
+
+	for (var i=0; i<markers.length; i++) {
+
+		var image = setIcons(locations[i].icon, iconSize);
+		markers[i].setIcon(image);
+	}
+
+}
+
+
+function setMapOnAll(map) {
+	for (var i = 0; i<markers.length; i++) {
+		markers[i].setMap(map);
+	}
+}

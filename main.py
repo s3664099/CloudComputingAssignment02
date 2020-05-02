@@ -112,15 +112,29 @@ class MainPage(webapp2.RequestHandler):
         #Sets up the function that performs the searches and stores the results
         #The queries are below.
         cursor = db.cursor()
-        cursor.execute("SELECT place.x_coord, place.y_coord, localtype.icon FROM place INNER JOIN localtype ON place.localtype=localtype.localtype")
+        cursor.execute("SELECT place.x_coord, place.y_coord, place.likes, localtype.icon FROM place INNER JOIN localtype ON place.localtype=localtype.localtype")
 
         #Now that we have performed the queries, the results are processed and stored
         #in the dictionary which is then passed back to the main function
-        for x_coord, y_coord, icon in cursor.fetchall():
+        for x_coord, y_coord, likes, icon in cursor.fetchall():
+
+            rating = 0
+
+            if (likes == 0):
+                rating = 1
+            elif (likes == 20):
+                rating = 2
+            elif (likes == 50):
+                rating =3
+            elif (likes == 80):
+                rating = 4
+            else:
+                rating = 5
 
             location_details = {
                 "x_coord": x_coord,
                 "y_coord": y_coord,
+                "rating": rating,
                 "icon": icon
                 }
             locations.append(location_details) 
