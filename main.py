@@ -12,13 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Sample App Engine application demonstrating how to connect to Google Cloud SQL
-using App Engine's native unix socket or using TCP when running locally.
-
-For more information, see the README.md.
-"""
-
 # [START gae_python_mysql_app]
 from google.appengine.ext import ndb
 
