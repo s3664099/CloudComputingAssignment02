@@ -1,3 +1,5 @@
+var markers = new Array()
+
 function initMap() {
   locationStatusText = document.getElementById("locationStatus");
   var map = new google.maps.Map(
@@ -16,22 +18,23 @@ function initMap() {
 	} else {
 		locationStatusText.innerHTML = "Failed to get location.";
 	}
-		
-    {% for location in location_details %}
-    x_coord = {{location.x_coord}};
-    y_coord = {{location.y_coord}};
-    icon = "{{location.icon}}";
-    var image = {
-  		url: 'https://storage.googleapis.com/map-icons-cca02/icons/'+icon+'?authuser=2',
-  		scaledSize: new google.maps.Size(20,20),
-  		origin: new google.maps.Point(0,0),
-  		anchor: new google.maps.Point(0,32)
-	};
-    var marker = new google.maps.Marker({position: {lat: x_coord, lng: y_coord }, 
-      	map: map,
-      	icon: image
-    })
-    {% endfor %}
+
+	for (i = 0; i < locations.length; i++) {
+
+	    var image = {
+	  		url: 'https://storage.googleapis.com/map-icons-cca02/icons/'+locations[i].icon+'?authuser=2',
+	  		scaledSize: new google.maps.Size(20,20),
+	  		origin: new google.maps.Point(0,0),
+	  		anchor: new google.maps.Point(0,32)
+		};
+	    var marker = new google.maps.Marker({position: {lat: locations[i].x_coord, lng: locations[i].y_coord }, 
+	      	map: map,
+	      	icon: image
+	    })
+	    markers.push(marker)
+	}
+
+    console.log(markers.length);
 }
 var styles = {
   	default: null,
