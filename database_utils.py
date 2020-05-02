@@ -72,10 +72,10 @@ class database_utils:
 	def get_all_open_in_area(self, left_long, up_lat, right_long, bottom_lat):
 		cur = self.db.cursor()
 
-		cur.execute("SELECT place.x_coord, place.y_coord, place.likes, localtype.icon FROM \
-					place INNER JOIN localtype ON place.localtype=localtype.localtype WHERE \
-					place.currentopen = 1 AND place.x_coord < "+up_lat+" AND place.x_coord > "+bottom_lat+" \
-					AND place.y_coord > "+left_long+" AND place.y_coord < "+right_long)
+		cur.execute("SELECT place.localename, place.x_coord, place.y_coord, place.likes, localtype.icon FROM \
+			place INNER JOIN localtype ON place.localtype=localtype.localtype WHERE \
+			place.currentopen = 1 AND place.x_coord < "+str(up_lat)+" AND place.x_coord > "+str(bottom_lat)+" \
+			AND place.y_coord > "+str(left_long)+" AND place.y_coord < "+str(right_long))
 
 		return cur.fetchall()
 
@@ -84,21 +84,22 @@ class database_utils:
 
 		cur.execute("SELECT place.x_coord, place.y_coord, localtype.icon FROM \
 					place INNER JOIN localtype ON place.localtype=localtype.localtype WHERE \
-					place.likes IS NOT NULL")
+					place.likes > 0")
 
 		return cur.fetchall()
 
-	def get_all_open_type_in_area(self, type, left_long, up_lat, right_long, bottom_lat):
+	def get_all_open_type_in_area(self, place_type, left_long, up_lat, right_long, bottom_lat):
 		cur = self.db.cursor()
 
 		cur.execute("SELECT place.x_coord, place.y_coord, place.likes, localtype.icon FROM \
 					place INNER JOIN localtype ON place.localtype=localtype.localtype WHERE \
-					place.currentopen = 1 AND place.x_coord < "+up_lat+" AND place.x_coord > "+bottom_lat+" \
-					AND place.y_coord > "+left_long+" AND place.y_coord < "+right_long+" AND place.localtype = "+type)
+					place.currentopen = 1 AND place.x_coord < "+str(up_lat)+" AND place.x_coord > "+str(bottom_lat)+" \
+					AND place.y_coord > "+str(left_long)+" AND place.y_coord < "+str(right_long)+" \
+					AND place.localtype = '"+place_type+"'")
 
 		return cur.fetchall()
 
-	
+
 
 
 

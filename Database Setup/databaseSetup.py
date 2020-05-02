@@ -190,15 +190,15 @@ def loadDataFile(conn):
 				likes = 0
 				dislikes = 0
 
-				if (fields[9] == 1):
+				if (fields[9] == "1"):
 					dislikes = 50
-				elif (fields[9] == 2):
+				elif (fields[9] == "2"):
 					likes = 20
 					dislikes = 80
-				elif (fields[9] == 3):
+				elif (fields[9] == "3"):
 					likes = 50
 					dislikes = 50
-				elif (fields[9] == 4):
+				elif (fields[9] == "4"):
 					likes = 80
 					dislikes = 50
 				else:

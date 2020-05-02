@@ -9,8 +9,6 @@ var latitude = 144.9805071;
 function initMap() {
   locationStatusText = document.getElementById("locationStatus");
 
- 	console.log(navigator.geolocation)
-
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function (position) {
 			var pos = {
