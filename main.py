@@ -26,9 +26,9 @@ from google.appengine.ext import ndb
 import os
 import hashlib
 import binascii
-import MySQLdb
 import webapp2
 import jinja2
+import database_utils as database
 
 from webapp2_extras import sessions
 
@@ -37,12 +37,6 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
-
-# These environment variables are configured in app.yaml.
-CLOUDSQL_CONNECTION_NAME = os.environ.get('CLOUDSQL_CONNECTION_NAME')
-CLOUDSQL_USER = os.environ.get('CLOUDSQL_USER')
-CLOUDSQL_PASSWORD = os.environ.get('CLOUDSQL_PASSWORD')
-CLOUDSQL_DB = os.environ.get('CLOUDSQL_DB')
 
 #Establish a class to hold variables pulled from the static HTML page
 class search ():
@@ -56,38 +50,6 @@ class User(ndb.Model):
     email = ndb.StringProperty()
     password = ndb.StringProperty()
     salt = ndb.StringProperty()
-
-
-
-#Function to connect to the SQL database in google cloud
-def connect_to_cloudsql():
-    # When deployed to App Engine, the `SERVER_SOFTWARE` environment variable
-    # will be set to 'Google App Engine/version'.
-    if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine/'):
-        # Connect using the unix socket located at
-        # /cloudsql/cloudsql-connection-name.
-        cloudsql_unix_socket = os.path.join(
-            '/cloudsql', CLOUDSQL_CONNECTION_NAME)
-
-        #This function here is what you use to connect to the SQL database
-        db = MySQLdb.connect(
-            unix_socket=cloudsql_unix_socket,
-            user=CLOUDSQL_USER,
-            passwd=CLOUDSQL_PASSWORD,
-            db=CLOUDSQL_DB,
-            charset='utf8')
-
-    # If the unix socket is unavailable, then try to connect using TCP. This
-    # will work if you're running a local MySQL server or using the Cloud SQL
-    # proxy, for example:
-    #
-    #   $ cloud_sql_proxy -instances=your-connection-name=tcp:3306
-    #
-    else:
-        db = MySQLdb.connect(
-            host='127.0.0.1', user=CLOUDSQL_USER, passwd=CLOUDSQL_PASSWORD, db=CLOUDSQL_DB, charset='utf8')
-
-    return db
 
 # https://stackoverflow.com/a/12737074
 # Maintains session data.
@@ -144,17 +106,13 @@ class MainPage(BaseHandler):
         location_details = {}
         template_values = {}
 
-        db = connect_to_cloudsql()
-        #MainPage.database_manip(self, db)
+        db = database.database_utils()
 
-        #Sets up the function that performs the searches and stores the results
-        #The queries are below.
-        cursor = db.cursor()
-        cursor.execute("SELECT place.x_coord, place.y_coord, place.likes, localtype.icon FROM place INNER JOIN localtype ON place.localtype=localtype.localtype")
+        results = db.get_all_locations()
 
         #Now that we have performed the queries, the results are processed and stored
         #in the dictionary which is then passed back to the main function
-        for x_coord, y_coord, likes, icon in cursor.fetchall():
+        for x_coord, y_coord, likes, icon in results:
 
             rating = 0
 

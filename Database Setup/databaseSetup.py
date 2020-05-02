@@ -12,10 +12,10 @@
 #This is required for python3 to create and manipulate mySql databases
 import pymysql
 
-hostname = '34.87.225.205'
-username = 'davesarkies'
-password = 'password'
-database = 'locationdataformaps'
+hostname = '127.0.0.1'
+username = 'root'
+password = 'root'
+database = 'mapmarker'
 datafile = 'places.txt'
 print("Hello")
 
@@ -322,9 +322,9 @@ cur.execute('SET NAMES utf8')
 cur.execute('SET CHARACTER SET utf8')
 cur.execute('SET character_set_connection=utf8')
 
-#clearDatabases(myConnection)
-#createTables(myConnection)
-#loadDataFile(myConnection)
+clearDatabases(myConnection)
+createTables(myConnection)
+loadDataFile(myConnection)
 testQuery(myConnection)
 myConnection.close()
 

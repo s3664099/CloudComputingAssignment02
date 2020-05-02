@@ -3,12 +3,13 @@ var iconSize = false;
 var iconShown = false;
 var smallIcon = 20;
 var largeIcon = 40;
+var longitude = -37.8165686;
+var latitude = 144.9805071;
 
 function initMap() {
   locationStatusText = document.getElementById("locationStatus");
-  var map = new google.maps.Map(
-   	document.getElementById('map'), {zoom: 15, center: {lat: -37.9604037, lng:144.7027854}});
-    map.setOptions({styles: styles['hide']})
+
+ 	console.log(navigator.geolocation)
 
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function (position) {
@@ -17,11 +18,19 @@ function initMap() {
       			lng: position.coords.longitude
        		};
 		var marker = new google.maps.Marker({position: pos, map: map});
-		locationStatusText.innerHTML = "Got location."
+		locationStatusText.innerHTML = "Got location.";
+		console.log("Got location");
+		latitude = pos.lat;
+		longitude = pos.lng;
 		});
 	} else {
 		locationStatusText.innerHTML = "Failed to get location.";
+		console.log("Failed to get location");
 	}
+
+  var map = new google.maps.Map(
+   	document.getElementById('map'), {zoom: 15, center: {lat: longitude, lng:latitude}});
+    map.setOptions({styles: styles['hide']})
 
 	for (i = 0; i < locations.length; i++) {
 
