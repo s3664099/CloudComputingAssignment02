@@ -37,7 +37,7 @@ function initMap() {
 	map.addListener('zoom_changed', function() {
 		zoom = map.getZoom();
 
-		if (zoom >14 && zoom < 18 && iconShown == false && iconSize == true) {
+		if (zoom >14 && zoom < 18 && (iconShown == false || iconSize == true)) {
 			setIconImage(true)
 			setMapOnAll(map);
 			iconSize = false;
