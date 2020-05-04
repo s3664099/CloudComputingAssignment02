@@ -271,19 +271,30 @@ class SignOut(BaseHandler):
     def get(self):
         self.session['user'] = None
         self.redirect('/')
+
+class Review(webapp2.RequestHandler):
+
+    def get(self):
+        template = JINJA_ENVIRONMENT.get_template("review.html")
+        self.response.write(template.render())
+
+    def post(self):
+        self.response.write(self.request.POST)
     
-#This function defines where data is to go. 
+# Config for Session Storage.
 config = {}
 config['webapp2_extras.sessions'] = {
     'secret_key': 'test',
 }
 
+#This function defines where data is to go. 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/search', Search),
     ('/login', Login),
     ('/signup', SignUpPage),
-    ('/signout', SignOut)
+    ('/signout', SignOut),
+    ('/review', Review)
 ], debug=True, config=config)
 
 # [END gae_python_mysql_app]
