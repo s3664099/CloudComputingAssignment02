@@ -22,6 +22,7 @@ import binascii
 import webapp2
 import jinja2
 import database_utils as database
+import logging
 
 from webapp2_extras import sessions
 
@@ -180,8 +181,12 @@ class Login(BaseHandler):
             pwdhash = binascii.hexlify(pwdhash).decode('ascii')
 
             if (pwdhash == storedPass):
-                # Redirect to wherever needed.
+                text = hashedEmail + " logged into the application."
+                logging.info(text)
+
                 self.session['user'] = hashedEmail
+                
+                # Redirect to wherever needed.
                 self.redirect('/')
             else:
                 template = JINJA_ENVIRONMENT.get_template('login.html')
