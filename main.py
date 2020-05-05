@@ -280,7 +280,7 @@ class SignOut(BaseHandler):
         self.session['user'] = None
         self.redirect('/')
 
-class Review(webapp2.RequestHandler):
+class Review(BaseHandler):
 
     def get(self):
         template = JINJA_ENVIRONMENT.get_template("review.html")
@@ -289,7 +289,7 @@ class Review(webapp2.RequestHandler):
     def post(self):
         placeType = self.request.get('type')
         self.response.write(self.request.POST)
-
+        userKey = self.session.get('user')
         # Handle writing to database here. Insert statements will be different depending on type of review.
 
 def sendNewAccMail(senderAdd, recieverAdd, firstName, surname):
