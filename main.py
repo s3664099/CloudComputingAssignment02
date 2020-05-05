@@ -14,6 +14,7 @@
 
 # [START gae_python_mysql_app]
 from google.appengine.ext import ndb
+from google.appengine.api import mail
 
 #Imports
 import os
@@ -23,6 +24,7 @@ import webapp2
 import jinja2
 import database_utils as database
 import logging
+
 
 from webapp2_extras import sessions
 
@@ -265,6 +267,7 @@ class SignUpPage(webapp2.RequestHandler):
                 newUser.put()
                 template = JINJA_ENVIRONMENT.get_template('login.html')
                 self.response.write(template.render(message = "Your account was created! Sign in below."))
+                sendNewAccMail("noreply@map-cc-assignment.appspotmail.com", email, firstName, surname)
             else:
                 # Display error if there is already an account.
                 emailError = "There is already an account associated with that email address."
@@ -284,8 +287,19 @@ class Review(webapp2.RequestHandler):
         self.response.write(template.render())
 
     def post(self):
+        placeType = self.request.get('type')
         self.response.write(self.request.POST)
+
+        # Handle writing to database here. Insert statements will be different depending on type of review.
+
+def sendNewAccMail(senderAdd, recieverAdd, firstName, surname):
+    mail.send_mail(sender = senderAdd, 
+    to = firstName + " " + surname + " <" + recieverAdd + ">",
+    subject = "Welcome!",
+    body = "Welcome " + firstName + """!
     
+    Thanks for signing up to the app. Visit https://map-cc-assignment.ts.r.appspot.com/ to sign in!""")
+
 # Config for Session Storage.
 config = {}
 config['webapp2_extras.sessions'] = {
