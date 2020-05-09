@@ -108,7 +108,7 @@ class MainPage(BaseHandler):
 
         #Now that we have performed the queries, the results are processed and stored
         #in the dictionary which is then passed back to the main function
-        for x_coord, y_coord, likes, icon in results:
+        for x_coord, y_coord, likes, localeName, description, icon in results:
 
             rating = 0
 
@@ -127,7 +127,9 @@ class MainPage(BaseHandler):
                 "x_coord": x_coord,
                 "y_coord": y_coord,
                 "rating": rating,
-                "icon": icon
+                "icon": icon,
+                "name": localeName,
+                "description": description
                 }
             locations.append(location_details) 
 

@@ -77,7 +77,7 @@ class database_utils:
 	def get_all_locations(self):
 		cur = self.db.cursor()
 			
-		cur.execute("SELECT place.x_coord, place.y_coord, place.likes, localtype.icon FROM \
+		cur.execute("SELECT place.x_coord, place.y_coord, place.likes, place.localeName, place.description, localtype.icon FROM \
 					place INNER JOIN localtype ON place.localtype=localtype.localtype")
 
 		return cur.fetchall()

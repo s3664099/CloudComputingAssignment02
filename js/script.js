@@ -1,5 +1,6 @@
 //set up the variables
 var markers = new Array();
+var infowindows = new Array();
 var iconSize = false;
 var iconShown = false;
 var smallIcon = 20;
@@ -44,12 +45,28 @@ function initMap() {
     //loads all of the locations that have been stored locally
     //and calls the marker that represents the location. The marker
     //locations are then stored in an array
+
+    //https://stackoverflow.com/questions/30012913/google-map-api-v3-add-multiple-infowindows
+    var infowindow = new google.maps.InfoWindow({maxWidth: 200});
+
 	for (i = 0; i < locations.length; i++) {
 
+		var content = "<b>"+locations[i].name+"</b>";
 	    var image = setIcons(locations[i].icon, smallIcon);
 	    var marker = new google.maps.Marker({position: {lat: locations[i].x_coord, lng: locations[i].y_coord }, 
 	      	map: map,
-	      	icon: image
+	      	icon: image,
+	      	contentString: content
+	    })
+	    marker.data = locations[i];
+	    
+	    marker.addListener('mouseover', function() {
+	    	infowindow.setContent("<div><h3>"+this.data.name+"</h3></div><p>"+this.data.descript+"</p>");
+	    	infowindow.open(map, this);
+	    })
+
+	    marker.addListener('mouseout', function() {
+	    	infowindow.close();
 	    })
 	    marker.setMap(null);
 	    markers.push(marker);
