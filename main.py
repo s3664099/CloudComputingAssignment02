@@ -25,8 +25,8 @@ import jinja2
 import database_utils as database
 import logging
 
-
 from webapp2_extras import sessions
+
 
 #This function sets up the jinj enviroment
 JINJA_ENVIRONMENT = jinja2.Environment(
