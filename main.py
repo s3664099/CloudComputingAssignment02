@@ -292,7 +292,37 @@ class Review(BaseHandler):
         placeType = self.request.get('type')
         self.response.write(self.request.POST)
         userKey = self.session.get('user')
-        # Handle writing to database here. Insert statements will be different depending on type of review.
+        
+        # Submit just the review part to the database.
+
+        lat = self.request.get('latitude')
+        lng = self.request.get('longitude')
+
+        liked = self.request.get('liked')
+
+        # Liked must be converted to tinyint.
+        trueLiked = 0
+        
+        if (liked == 'Yes'):
+           trueLiked = 1
+        else:
+            trueLiked = 0
+
+        review = self.request.get('review')
+
+        db = database.database_utils()
+
+        db.addReview(lat, lng, userKey, liked, review)
+
+        self.response.write(self.request.POST)
+
+class AddPlace(BaseHandler):
+    def get(self):
+        template = JINJA_ENVIRONMENT.get_template("addplace.html")
+        self.response.write(template.render())
+
+
+         
 
 def sendNewAccMail(senderAdd, recieverAdd, firstName, surname):
     mail.send_mail(sender = senderAdd, 
@@ -315,7 +345,8 @@ app = webapp2.WSGIApplication([
     ('/login', Login),
     ('/signup', SignUpPage),
     ('/signout', SignOut),
-    ('/review', Review)
+    ('/review', Review),
+    ('/addplace', AddPlace)
 ], debug=True, config=config)
 
 # [END gae_python_mysql_app]

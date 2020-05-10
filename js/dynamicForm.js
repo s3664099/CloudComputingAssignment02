@@ -8,7 +8,7 @@ function changeForm() {
 
     form.setAttribute('method', "POST");
     form.setAttribute('id', "reviewForm");
-    form.setAttribute('action', '/review');
+    form.setAttribute('action', '/newplace');
 
     var formElements = [];
 
@@ -36,24 +36,6 @@ function changeForm() {
     }
 
     var yesNo = ["Yes", "No"];
-
-    var likeLabel = document.createElement("label");
-    likeLabel.innerHTML = "Did you like this location?";
-    formElements.push(likeLabel);
-
-    addRadioButtonSet(yesNo, formElements, "liked");
-    formElements.push(document.createElement("br"));
-
-    var reviewLabel = document.createElement("label");
-    reviewLabel.innerHTML = "Your Review:";
-    formElements.push(reviewLabel);
-    formElements.push(document.createElement("br"));
-
-    var reviewText = document.createElement("textarea");
-    reviewText.name = "review";
-    reviewText.form = "reviewForm";
-    formElements.push(reviewText);
-    formElements.push(document.createElement("br"));
 
     if (type == "bar") {
         makeBarForm(formElements);

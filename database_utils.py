@@ -121,6 +121,16 @@ class database_utils:
 
 		return cur.fetchall()
 
+	def addReview(self, lat, lng, username, liked, review):
+		cur = self.db.cursor()
+
+		query = "INSERT into RATING(x_coord, y_coord, username, liked, review) \
+			VALUES (" + lat + ", " + lng + ", " + "'" + username + "'" + ", " + liked + " '"+ review + "'" + ");"
+
+		cur.execute(query)
+
+		return cur.fetchall()
+
 
 
 
