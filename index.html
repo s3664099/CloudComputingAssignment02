@@ -9,7 +9,7 @@
   </head>
   <body>
 
-  	<div id="topBar" style="">
+  	<div id="topBar">
 	  
 	  {% if user is not none%}
 	  	<p id="signInStatus">Signed in as: {{user}}</p>
@@ -25,6 +25,10 @@
 	</div>
 
     <div id="map"></div>
+
+    <div id="topBar">
+    	<a href="">Sources</a>
+    	<a href="mailto: david.sarkies@internode.on.net">Contact Owner</a>
 
 	<!-- source: https://stackoverflow.com/questions/21956500/use-jinja2-template-engine-in-external-javascript-file -->
     <script>{% include 'template.js' %}</script>
