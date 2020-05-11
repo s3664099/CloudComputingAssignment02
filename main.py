@@ -24,6 +24,7 @@ import webapp2
 import jinja2
 import database_utils as database
 import logging
+import math
 
 from webapp2_extras import sessions
 
@@ -280,19 +281,89 @@ class SignUpPage(webapp2.RequestHandler):
 class SignOut(BaseHandler):
     def get(self):
         self.session['user'] = None
+        self.session['lat'] = None
+        self.session['lng'] = None
         self.redirect('/')
 
 class Review(BaseHandler):
 
     def get(self):
-        template = JINJA_ENVIRONMENT.get_template("review.html")
-        self.response.write(template.render())
+        if (self.session.get('lat') is None):
+            self.redirect('/')
+        else:
+            template = JINJA_ENVIRONMENT.get_template("review.html")
+            self.response.write(template.render())
+        
 
     def post(self):
         placeType = self.request.get('type')
-        self.response.write(self.request.POST)
         userKey = self.session.get('user')
-        # Handle writing to database here. Insert statements will be different depending on type of review.
+
+        db = database.database_utils()
+        
+        # Submit just the review part to the database.
+
+        lat = self.session.get('lat')
+        lng = self.session.get('lng')
+
+        if (lat == None or lng == None):
+            template = JINJA_ENVIRONMENT.get_template("review.html")
+            self.response.write(template.render(message = "Could not get location data."))
+
+        liked = self.request.get('liked')
+
+        if db.checkIfPlace(lat, lng):
+            # Liked must be converted to tinyint.
+            trueLiked = 0
+            
+            if (liked == 'Yes'):
+                trueLiked = 1
+            else:
+                trueLiked = 0
+
+            review = self.request.get('review')
+
+            db.addReview(lat, lng, userKey, liked, review)
+            self.redirect('/')
+        else:
+            template = JINJA_ENVIRONMENT.get_template("review.html")
+            self.response.write(template.render(message = "No place was detected at your location. Please add your place before reviewing."))
+
+class AddPlace(BaseHandler):
+    def get(self):
+        if (self.session.get('lat') is None):
+            self.redirect('/')
+        else:
+            template = JINJA_ENVIRONMENT.get_template("addplace.html")
+            self.response.write(template.render())
+
+    def post(self):
+        self.response.write(self.request.POST)
+        lat = self.session.get('lat')
+        lng = self.session.get('lng')
+        placeName = self.request.get('placeName')
+        address = self.request.get('address')
+        town = self.request.get('town')
+        state = self.request.get('state')
+        country = self.request.get('country')
+        email = self.request.get('email')
+        phone = self.request.get('phone')
+        website = self.request.get('website')
+        description = self.request.get('description')
+        placeType = self.request.get('type')
+
+        db = database.database_utils()
+
+        if (lat == None or lng == None):
+            template = JINJA_ENVIRONMENT.get_template("addplace.html")
+            self.response.write(template.render(message = "Could not get location data."))   
+
+        # Method checks if town exists.
+        if (db.checkIfPlace(lat, lng) == False):
+            db.addTown(town, state, country)
+            db.addPlace(lat, lng, placeName, address, town, state, country, email, phone, website, description, placeType)
+        else:
+            print("Place already exists.")
 
 def sendNewAccMail(senderAdd, recieverAdd, firstName, surname):
     mail.send_mail(sender = senderAdd, 
@@ -300,7 +371,23 @@ def sendNewAccMail(senderAdd, recieverAdd, firstName, surname):
     subject = "Welcome!",
     body = "Welcome " + firstName + """!
     
-    Thanks for signing up to the app. Visit https://map-cc-assignment.ts.r.appspot.com/ to sign in!""")
+    Thanks for signing up to the app. Visit https://beercoffeemaps.com to sign in!""")
+
+class LockLocation(BaseHandler):
+    def post(self):
+        lat = self.request.get("latitude")
+        lng = self.request.get("longitude")
+        
+        # Convert to six decimal places to match the schema.
+        self.session['lat'] = "%.6f" % float(lat)
+        self.session['lng'] = "%.6f" % float(lng)
+
+        logging.info(self.session['lat'])
+        logging.info(self.session['lng'])
+
+        self.redirect('/')
+
+
 
 # Config for Session Storage.
 config = {}
@@ -315,7 +402,9 @@ app = webapp2.WSGIApplication([
     ('/login', Login),
     ('/signup', SignUpPage),
     ('/signout', SignOut),
-    ('/review', Review)
+    ('/review', Review),
+    ('/addplace', AddPlace),
+    ('/locklocation', LockLocation)
 ], debug=True, config=config)
 
 # [END gae_python_mysql_app]

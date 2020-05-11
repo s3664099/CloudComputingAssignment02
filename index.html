@@ -14,7 +14,9 @@
 	  {% if user is not none%}
 	  	<p id="signInStatus">Signed in as: {{user}}</p>
 		<form action="\signout"><input type="submit" value="Sign Out"></form>
+    <form action="\addplace"><input type="submit" value = "Add Place"></form>
     <form action="\review"><input type="submit" value="Review Location"></form>
+    <div id="lockInLocation"></div>
 	  {% else %}
 		<form action="\signup"><input type="submit" value="Sign Up"></form>
 		<form action="\login"><input type="submit" value="Login"></form>
