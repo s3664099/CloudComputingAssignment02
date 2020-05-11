@@ -21,6 +21,7 @@ For more information, see the README.md.
 
 import MySQLdb
 import os
+import logging
 
 class database_utils:
 
@@ -124,12 +125,63 @@ class database_utils:
 	def addReview(self, lat, lng, username, liked, review):
 		cur = self.db.cursor()
 
-		query = "INSERT into RATING(x_coord, y_coord, username, liked, review) \
-			VALUES (" + lat + ", " + lng + ", " + "'" + username + "'" + ", " + liked + " '"+ review + "'" + ");"
+		if liked == "Yes":
+			liked = 1
+		else:
+			liked = 0
+
+		query = "INSERT into rating(x_coord, y_coord, username, liked, review) \
+			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + username + "', '" + str(liked) + "', '" + review + "');"
+
+		cur.execute(query)
+		self.db.commit()
+
+
+		return cur.fetchall()
+
+	def checkIfPlace(self, lat, lng):
+		placeExists = False
+		cur = self.db.cursor()
+
+		query = "SELECT * FROM place WHERE x_coord = '" + str(lat) + "' AND y_coord = '" + str(lng) + "';"
+
+		print(query)
 
 		cur.execute(query)
 
-		return cur.fetchall()
+		result = cur.fetchall()
+
+		if not result:
+			placeExists = False
+		else:
+			placeExists = True
+
+		return placeExists
+
+	def addTown(self, town, state, country):
+		cur = self.db.cursor()
+
+		query = "SELECT * FROM location WHERE town = '" + town + "' AND state = '" + state + "';"
+
+		cur.execute(query)
+
+		result = cur.fetchall()
+
+		if not result:
+			addQuery = "INSERT into location (town, state, country) values ('" + town + "', '" + state + "', '" + country + "');"
+			cur.execute(addQuery)
+			self.db.commit()
+
+	def addPlace(self, lat, lng, placeName, address, town, state, country, email, phone, website, description, placeType):
+		cur = self.db.cursor()
+
+		query = "INSERT INTO place (x_coord, y_coord, localeName, address, town, state, email, telephone, website, likes, dislikes, description, localtype) \
+				values (" + str(lat) + ", " + str(lng) + ", '" + placeName + "', '"  + address + "', '" + town + "', '" \
+				+ state + "', '" + email + "', '" + phone + "', '" + website + "', " + str(0) + ", " + str(0) + ", '" \
+				+ description + "', '" + placeType + "');"
+		
+		cur.execute(query)
+		self.db.commit()
 
 
 

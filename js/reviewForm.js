@@ -9,29 +9,6 @@ function makeReviewForm() {
 
     var formElements = [];
 
-    var reviewLat = document.createElement("input");
-    reviewLat.hidden = true;
-    reviewLat.name = "latitude";
-    reviewLat.value = "";
-    formElements.push(reviewLat);
-
-    var reviewLng = document.createElement("input");
-    reviewLng.hidden = true;
-    reviewLng.name = "longitude";
-    reviewLng.value = "";
-    formElements.push(reviewLng);
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-			var pos = {
- 	  			lat: position.coords.latitude,
-      			lng: position.coords.longitude
-       		};
-		reviewLat.value = pos.lat;
-		reviewLng.value = pos.lng;
-		});
-    }
-
     var yesNo = ["Yes", "No"];
 
     var likeLabel = document.createElement("label");
