@@ -7,52 +7,112 @@ function changeForm() {
     var form = document.createElement("form");
 
     form.setAttribute('method', "POST");
-    form.setAttribute('id', "reviewForm");
-    form.setAttribute('action', '/review');
+    form.setAttribute('id', "placeForm");
+    form.setAttribute('action', '/addplace');
 
     var formElements = [];
 
-    var reviewLat = document.createElement("input");
-    reviewLat.hidden = true;
-    reviewLat.name = "latitude";
-    reviewLat.value = "";
-    formElements.push(reviewLat);
+    var placeLabel = document.createElement("label");
+    placeLabel.innerHTML = "Place Name: ";
+    formElements.push(placeLabel);
 
-    var reviewLng = document.createElement("input");
-    reviewLng.hidden = true;
-    reviewLng.name = "longitude";
-    reviewLng.value = "";
-    formElements.push(reviewLng);
+    var placeName = document.createElement("input");
+    placeName.type = "text";
+    placeName.name = "placeName";
+    placeName.required = true;
+    formElements.push(placeName);
 
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-			var pos = {
- 	  			lat: position.coords.latitude,
-      			lng: position.coords.longitude
-       		};
-		reviewLat.value = pos.lat;
-		reviewLng.value = pos.lng;
-		});
-    }
-
-    var yesNo = ["Yes", "No"];
-
-    var likeLabel = document.createElement("label");
-    likeLabel.innerHTML = "Did you like this location?";
-    formElements.push(likeLabel);
-
-    addRadioButtonSet(yesNo, formElements, "liked");
     formElements.push(document.createElement("br"));
 
-    var reviewLabel = document.createElement("label");
-    reviewLabel.innerHTML = "Your Review:";
-    formElements.push(reviewLabel);
+    var addressLabel = document.createElement("label");
+    addressLabel.innerHTML = "Address: ";
+    formElements.push(addressLabel);
+
+    var address = document.createElement("input");
+    address.type = "text";
+    address.name = "address";
+    formElements.push(address);
+
     formElements.push(document.createElement("br"));
 
-    var reviewText = document.createElement("textarea");
-    reviewText.name = "review";
-    reviewText.form = "reviewForm";
-    formElements.push(reviewText);
+    var townLabel = document.createElement("label");
+    townLabel.innerHTML = "Town: ";
+    formElements.push(townLabel);
+
+    var town  = document.createElement("input");
+    town.type = "text";
+    town.name = "town";
+    town.required = true;
+    formElements.push(town);
+
+    formElements.push(document.createElement("br"));
+
+    var stateLabel = document.createElement("label");
+    stateLabel.innerHTML = "State: ";
+    formElements.push(stateLabel);
+
+    var state = document.createElement("input");
+    state.type = "text";
+    state.name = "state";
+    state.required = true;
+    formElements.push(state);
+
+    formElements.push(document.createElement("br"));
+
+    var countryLabel = document.createElement("label");
+    countryLabel.innerHTML = "Country: ";
+    formElements.push(countryLabel);
+
+    var country = document.createElement("input");
+    country.type = "text";
+    country.name = "country";
+    country.required = true;
+    formElements.push(country);
+
+    formElements.push(document.createElement("br"));
+
+    var emailLabel = document.createElement("label");
+    emailLabel.innerHTML = "Email: ";
+    formElements.push(emailLabel);
+
+    var email = document.createElement("input");
+    email.type = "text";
+    email.name = "email";
+    formElements.push(email);
+
+    formElements.push(document.createElement("br"));
+
+    var phoneLabel  = document.createElement("label");
+    phoneLabel.innerHTML = "Phone Number: ";
+    formElements.push(phoneLabel);
+
+    var phone  = document.createElement("input");
+    phone.type = "text";
+    phone.name = "phone";
+    formElements.push(phone);
+
+    formElements.push(document.createElement("br"));
+
+    var webLabel  = document.createElement("label");
+    webLabel.innerHTML = "Website: ";
+    formElements.push(webLabel);
+
+    var website = document.createElement("input");
+    website.type = "text";
+    website.name = "website";
+    formElements.push(website);
+
+    formElements.push(document.createElement("br"));
+
+    var descLabel  = document.createElement("label");
+    descLabel.innerHTML = "Description: ";
+    formElements.push(descLabel);
+
+    var description = document.createElement("textarea");
+    description.name = "description";
+    description.form = "placeForm";
+    formElements.push(description);
+
     formElements.push(document.createElement("br"));
 
     if (type == "bar") {
@@ -73,7 +133,7 @@ function changeForm() {
 
     var submitButton = document.createElement("input");
     submitButton.type = "submit";
-    submitButton.value = "Submit Review";
+    submitButton.value = "Submit";
     formElements.push(submitButton);
 
     for (element of formElements) {
@@ -88,7 +148,7 @@ function makeBarForm(formElements) {
     var placeType = document.createElement("input");
     placeType.hidden = true;
     placeType.name = "type";
-    placeType.value = "bar";
+    placeType.value = "Pub/Bar";
     formElements.push(placeType);
 
     var craftLabel = document.createElement("label");
@@ -153,7 +213,7 @@ function makeCafeForm(formElements) {
     var placeType = document.createElement("input");
     placeType.hidden = true;
     placeType.name = "type";
-    placeType.value = "cafe";
+    placeType.value = "Cafe";
     formElements.push(placeType);
 
     var coffeeLabel = document.createElement("label");
@@ -201,7 +261,7 @@ function makeMuseumForm(formElements) {
     var placeType = document.createElement("input");
     placeType.hidden = true;
     placeType.name = "type";
-    placeType.value = "museum";
+    placeType.value = "Museum";
     formElements.push(placeType);
 
     var entryLabel = document.createElement("label");
@@ -225,7 +285,7 @@ function makeTakeawayForm(formElements) {
     var placeType = document.createElement("input");
     placeType.hidden = true;
     placeType.name = "type";
-    placeType.value = "takeaway";
+    placeType.value = "Restaurant, Takeaway";
     formElements.push(placeType);
 
     var valueLabel = document.createElement("label");

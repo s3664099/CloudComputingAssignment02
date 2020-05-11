@@ -30,6 +30,31 @@ function initMap() {
 		latitude = pos.lat;
 		longitude = pos.lng;
 		});
+
+		var lockLocation = document.createElement("form");
+		lockLocation.setAttribute('method', "POST");
+		lockLocation.setAttribute('action', '/locklocation');
+
+		var reviewLat = document.createElement("input");
+		reviewLat.hidden = true;
+		reviewLat.name = "latitude";
+		reviewLat.value = latitude;
+
+		var reviewLng = document.createElement("input");
+		reviewLng.hidden = true;
+		reviewLng.name = "longitude";
+		reviewLng.value = longitude;
+
+		var submitButton = document.createElement("input");
+		submitButton.type = "submit";
+		submitButton.value = "Lock Location";
+
+		lockLocation.appendChild(reviewLat);
+		lockLocation.appendChild(reviewLng);
+		lockLocation.appendChild(submitButton);
+
+		document.getElementById("lockInLocation").appendChild(lockLocation);
+
 	} else {
 		//otherwise prints error
 		locationStatusText.innerHTML = "Failed to get location.";
