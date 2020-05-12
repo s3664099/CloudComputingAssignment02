@@ -108,6 +108,10 @@ class MainPage(BaseHandler):
         if search.locale_type != "":
             template_values = MainPage.perform_search(self)
 
+        if (self.session.get('lockError') == True):
+            template_values['lock'] = "Please lock your location before reviewing or adding your location."
+            self.session['lockError'] = False
+
         userKey = self.session.get('user')
         template_values['user'] = userKey
         template_values['loginCount'] = dailyLogins
@@ -314,6 +318,7 @@ class Review(BaseHandler):
 
     def get(self):
         if (self.session.get('lat') is None):
+            self.session['lockError'] = True
             self.redirect('/')
         else:
             template = JINJA_ENVIRONMENT.get_template("review.html")
@@ -349,7 +354,8 @@ class Review(BaseHandler):
             review = self.request.get('review')
 
             db.addReview(lat, lng, userKey, liked, review)
-            self.redirect('/') 
+            template = JINJA_ENVIRONMENT.get_template("review.html")
+            self.response.write(template.render(message = "Review successfully submitted!"))
         else:
             template = JINJA_ENVIRONMENT.get_template("review.html")
             self.response.write(template.render(message = "No place was detected at your location. Please add your place before reviewing."))
@@ -357,13 +363,14 @@ class Review(BaseHandler):
 class AddPlace(BaseHandler):
     def get(self):
         if (self.session.get('lat') is None):
+            self.session['lockError'] = True
             self.redirect('/')
         else:
             template = JINJA_ENVIRONMENT.get_template("addplace.html")
             self.response.write(template.render())
 
     def post(self):
-        self.response.write(self.request.POST)
+        # self.response.write(self.request.POST)
         lat = self.session.get('lat')
         lng = self.session.get('lng')
         placeName = self.request.get('placeName')
@@ -379,14 +386,12 @@ class AddPlace(BaseHandler):
 
         db = database.database_utils()
 
-        if (lat == None or lng == None):
-            template = JINJA_ENVIRONMENT.get_template("addplace.html")
-            self.response.write(template.render(message = "Could not get location data."))   
-
         # Method checks if town exists.
         if (db.checkIfPlace(lat, lng) == False):
             db.addTown(town, state, country)
             db.addPlace(lat, lng, placeName, address, town, state, country, email, phone, website, description, placeType)
+
+            placeSpecific = {}
             
             if (placeType == "Pub/Bar"):
                 placeSpecific['craftBeer'] = self.request.get('craftBeer')
@@ -396,6 +401,7 @@ class AddPlace(BaseHandler):
                 placeSpecific['sportsBar'] = self.request.get('sportsBar')
                 placeSpecific['atmosphere'] = self.request.get('atmosphere')
                 placeSpecific['animalPermitted'] = self.request.get('animalPermitted')
+                db.addPubInfo(placeSpecific, lat, lng)
             else:
                 if (placeType == "Cafe"):
                     placeSpecific['coffee'] = self.request.get('coffee')
@@ -403,18 +409,24 @@ class AddPlace(BaseHandler):
                     placeSpecific['teaPot'] = self.request.get('teaPot')
                     placeSpecific['sugar'] = self.request.get('sugar')
                     placeSpecific['keepCupDiscount'] = self.request.get('keepCupDiscount')
+                    db.addCafeInfo(placeSpecific, lat, lng)
                 else:
                     if (placeType == "Museum"):
                         placeSpecific['entryFee'] = self.request.get('entryFee')
                         placeSpecific['timeAllowed'] = self.request.get('timeAllowed')
+                        db.addMuseumInfo(placeSpecific, lat, lng)
                     else:
                         if (placeType == "Restaurant, Takeaway"):
                             placeSpecific['value'] = self.request.get('value')
                             placeSpecific['containers'] = self.request.get('containers')
-        else:
-            print("Place already exists.")
+                            db.addTakeawayInfo(placeSpecific, lat, lng)
 
-        placeSpecific = {}
+            template = JINJA_ENVIRONMENT.get_template("addplace.html")
+            self.response.write(template.render(message = "Place successfully added."))
+        else:
+            template = JINJA_ENVIRONMENT.get_template("addplace.html")
+            self.response.write(template.render(message = "Location already exists."))
+
 
         
 
@@ -435,9 +447,6 @@ class LockLocation(BaseHandler):
         # Convert to six decimal places to match the schema.
         self.session['lat'] = "%.6f" % float(lat)
         self.session['lng'] = "%.6f" % float(lng)
-
-        logging.info(self.session['lat'])
-        logging.info(self.session['lng'])
 
         self.redirect('/')
 
