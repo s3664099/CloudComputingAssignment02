@@ -386,8 +386,37 @@ class AddPlace(BaseHandler):
         if (db.checkIfPlace(lat, lng) == False):
             db.addTown(town, state, country)
             db.addPlace(lat, lng, placeName, address, town, state, country, email, phone, website, description, placeType)
+            
+            if (placeType == "Pub/Bar"):
+                placeSpecific['craftBeer'] = self.request.get('craftBeer')
+                placeSpecific['beerGarden'] = self.request.get('beerGarden')
+                placeSpecific['rooftopDeck'] = self.request.get('rooftopDeck')
+                placeSpecific['pokies'] = self.request.get('pokies')
+                placeSpecific['sportsBar'] = self.request.get('sportsBar')
+                placeSpecific['atmosphere'] = self.request.get('atmosphere')
+                placeSpecific['animalPermitted'] = self.request.get('animalPermitted')
+            else:
+                if (placeType == "Cafe"):
+                    placeSpecific['coffee'] = self.request.get('coffee')
+                    placeSpecific['tea'] = self.request.get('tea')
+                    placeSpecific['teaPot'] = self.request.get('teaPot')
+                    placeSpecific['sugar'] = self.request.get('sugar')
+                    placeSpecific['keepCupDiscount'] = self.request.get('keepCupDiscount')
+                else:
+                    if (placeType == "Museum"):
+                        placeSpecific['entryFee'] = self.request.get('entryFee')
+                        placeSpecific['timeAllowed'] = self.request.get('timeAllowed')
+                    else:
+                        if (placeType == "Restaurant, Takeaway"):
+                            placeSpecific['value'] = self.request.get('value')
+                            placeSpecific['containers'] = self.request.get('containers')
         else:
             print("Place already exists.")
+
+        placeSpecific = {}
+
+        
+
 
 def sendNewAccMail(senderAdd, recieverAdd, firstName, surname):
     mail.send_mail(sender = senderAdd, 
