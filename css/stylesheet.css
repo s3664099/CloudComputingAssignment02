@@ -1,0 +1,44 @@
+/* Always set the map height explicitly to define the size of the div
+ * element that contains the map. */
+body {
+	background-color: black; 
+}
+
+h3 {
+	color: blue;
+}
+
+form {
+	display: inline-flex;
+	padding-left: 20px;
+}
+
+img {
+	display: inline-flex;
+}
+
+#signInStatus {
+	display: inline-flex;
+}
+
+#map {
+    height: 100%;
+    border-style: inset;
+    border-color: ;
+}
+
+/* Optional: Makes the sample page fill the window. */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}  
+
+#topBar {
+	border-style: inset; 
+	border-radius: 25px; 
+	border-width: medium; 
+	padding: 20 px; 
+	border-color: #333300; 
+	background-color: #ffffcc;
+}

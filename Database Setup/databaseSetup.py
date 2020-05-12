@@ -11,13 +11,23 @@
 
 #This is required for python3 to create and manipulate mySql databases
 import pymysql
+from google.cloud import translate_v2 as translate
+translate_client = translate.Client()
 
-hostname = '127.0.0.1'
-username = 'root'
-password = 'root'
-database = 'mapmarker'
+hostname = '34.87.225.205'
+username = 'davesarkies'
+password = 'password'
+database = 'locationdataformaps'
 datafile = 'places.txt'
-print("Hello")
+text = "Hello"
+french = "fr"
+german = 'de'
+italian = 'it'
+
+def translate(text, target):
+	result = translate_client.translate(
+	    text, target_language=target)
+	return result['translatedText']
 
 #This function clears the database
 def clearDatabases(conn):
@@ -65,9 +75,6 @@ def clearDatabases(conn):
 	except:
 		print("No such table as infoTakeaway")
 
-
-
-
 #This function creates the tables associated with the database
 def createTables(conn):
 	cur = conn.cursor()
@@ -85,7 +92,8 @@ def createTables(conn):
 	try:	
 		cur.execute("CREATE TABLE place (x_coord DECIMAL (9,6), y_coord DECIMAL (9,6), localeName VARCHAR(255), address VARCHAR(255)\
 					, town VARCHAR(20), state VARCHAR(30), email VARCHAR(100), telephone VARCHAR(30), website VARCHAR(100),\
-					 likes INTEGER(5), dislikes INTEGER(5), currentopen BOOLEAN, description TEXT(5000), localtype VARCHAR(30),\
+					 likes INTEGER(5), dislikes INTEGER(5), currentopen BOOLEAN, description TEXT(5000), descript_de TEXT(5000),\
+					 descript_fr TEXT(5000), descript_it TEXT(5000), localtype VARCHAR(30),\
 					 picture VARCHAR(20), PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (localtype) REFERENCES localtype(localtype),\
 					 FOREIGN KEY (town, state) REFERENCES location(town, state))")
 	except pymysql.Error as e:
@@ -212,11 +220,19 @@ def loadDataFile(conn):
 				else:
 					isOpen = False
 
+				de_description = translate(fields[13], german)
+				fr_description = translate(fields[13], french)
+				it_description = translate(fields[13], italian)
+
+
+
 				if (isOpen == True):
-					cur.execute("INSERT INTO place(localename,x_coord,y_coord, address, town, state, telephone, website,currentopen,\
-								 localtype, likes, dislikes, description) VALUES ('"+fields[0]+"','"+str(x_coord)+"','"+str(y_coord)+
-								 "','"+fields[1]+"','"+fields[2]+"','"+fields[3]+"','"+fields[5]+"','"+fields[6]+"','"+fields[12]+
-								 "','"+fields[10]+"','"+str(likes)+"','"+str(dislikes)+"','"+fields[13]+"')")
+					cur.execute("INSERT INTO place(localename,x_coord,y_coord, address, town, state, telephone, \
+								website,currentopen, localtype, likes, dislikes, description, descript_de, descript_it,\
+								 descript_fr) VALUES ('"+fields[0]+"','"+str(x_coord)+"','"+str(y_coord)+"',\
+								 '"+fields[1]+"','"+fields[2]+"','"+fields[3]+"','"+fields[5]+"','"+fields[6]+"',\
+								 '"+fields[12]+"','"+fields[10]+"','"+str(likes)+"','"+str(dislikes)+"','"+fields[13]+"\
+								 ','"+de_description+"','"+it_description+"','"+fr_description+"')")
 				else:
 					cur.execute("INSERT INTO place(localename,x_coord,y_coord, address, town, state, telephone, website,localtype,\
 								 likes, dislikes, description) VALUES ('"+fields[0]+"','"+str(x_coord)+"','"+str(y_coord)+"','"+fields[1]+
@@ -297,17 +313,21 @@ def testQuery(conn):
 		print("Error")
 
 	try:
-		cur.execute("SELECT localename, x_coord, y_coord, description FROM place")
+		cur.execute("SELECT localename, x_coord, y_coord, description, descript_de, descript_fr, descript_it FROM place")
 
 		number=0
 
 		#print(cur.fetchall())
 
-		for localename, x_coord, y_coord,description in cur.fetchall():
+		for localename, x_coord, y_coord,description, de_description, fr_description, it_description in cur.fetchall():
 			number+=1
-			print(str(number)+") "+localename+" "+str(x_coord)+","+str(y_coord)+","+str(description))
-	except:
-		print("Tables not in existence")
+			print(str(number)+") "+localename+" "+str(x_coord)+","+str(y_coord))
+			print("English: "+description)
+			print("German: "+str(de_description))
+			print("French: "+str(fr_description))
+			print("italian: "+str(it_description))
+	except pymysql.Error as e:
+		print("Error: ",e)
 
 	cur.execute("SELECT localename, x_coord, y_coord FROM place WHERE localtype='Airport'")
 	print(cur.fetchall())
@@ -322,9 +342,9 @@ cur.execute('SET NAMES utf8')
 cur.execute('SET CHARACTER SET utf8')
 cur.execute('SET character_set_connection=utf8')
 
-clearDatabases(myConnection)
-createTables(myConnection)
-loadDataFile(myConnection)
+#clearDatabases(myConnection)
+#createTables(myConnection)
+#loadDataFile(myConnection)
 testQuery(myConnection)
 myConnection.close()
 
