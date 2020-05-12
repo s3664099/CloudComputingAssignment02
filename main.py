@@ -38,6 +38,7 @@ from google.cloud import bigquery
 from requests_toolbelt.adapters import appengine
 appengine.monkeypatch()
 
+
 #This function sets up the jinj enviroment
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
