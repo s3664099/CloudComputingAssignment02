@@ -13,6 +13,7 @@
 # limitations under the License.
 
 # [START gae_python_mysql_app]
+from __future__ import absolute_import
 from google.appengine.ext import ndb
 from google.appengine.api import mail
 
@@ -25,8 +26,17 @@ import jinja2
 import database_utils as database
 import logging
 import math
+import requests
+import json 
+
+# Getting this to work was a mess...
+# https://stackoverflow.com/questions/40886217/error-importing-google-cloud-bigquery-api-module-in-python-app
+# https://stackoverflow.com/questions/43085047/how-to-import-bigquery-in-appengine-for-python
 
 from webapp2_extras import sessions
+from google.cloud import bigquery
+from requests_toolbelt.adapters import appengine
+appengine.monkeypatch()
 
 
 #This function sets up the jinj enviroment
@@ -81,11 +91,30 @@ class MainPage(BaseHandler):
         #These are the values that wull be used by the HTML file
         template_values = {}
 
+        client = bigquery.Client()
+
+        query = """
+            SELECT count(*) FROM `map-cc-assignment.LoginData.appengine_googleapis_com_request_log_20200512` 
+            where DATE(timestamp) = CURRENT_DATE LIMIT 1000;
+        """
+        query_job = client.query(query)
+        results = query_job.result()
+
+        dailyLogins = 0
+
+        for row in results:
+            dailyLogins = row.f0_
+
         if search.locale_type != "":
             template_values = MainPage.perform_search(self)
 
+        if (self.session.get('lockError') == True):
+            template_values['lock'] = "Please lock your location before reviewing or adding your location."
+            self.session['lockError'] = False
+
         userKey = self.session.get('user')
         template_values['user'] = userKey
+        template_values['loginCount'] = dailyLogins
 
 
         #This code sends the template values to the HTML file.
@@ -289,6 +318,7 @@ class Review(BaseHandler):
 
     def get(self):
         if (self.session.get('lat') is None):
+            self.session['lockError'] = True
             self.redirect('/')
         else:
             template = JINJA_ENVIRONMENT.get_template("review.html")
@@ -324,7 +354,8 @@ class Review(BaseHandler):
             review = self.request.get('review')
 
             db.addReview(lat, lng, userKey, liked, review)
-            self.redirect('/')
+            template = JINJA_ENVIRONMENT.get_template("review.html")
+            self.response.write(template.render(message = "Review successfully submitted!"))
         else:
             template = JINJA_ENVIRONMENT.get_template("review.html")
             self.response.write(template.render(message = "No place was detected at your location. Please add your place before reviewing."))
@@ -332,13 +363,14 @@ class Review(BaseHandler):
 class AddPlace(BaseHandler):
     def get(self):
         if (self.session.get('lat') is None):
+            self.session['lockError'] = True
             self.redirect('/')
         else:
             template = JINJA_ENVIRONMENT.get_template("addplace.html")
             self.response.write(template.render())
 
     def post(self):
-        self.response.write(self.request.POST)
+        # self.response.write(self.request.POST)
         lat = self.session.get('lat')
         lng = self.session.get('lng')
         placeName = self.request.get('placeName')
@@ -354,16 +386,50 @@ class AddPlace(BaseHandler):
 
         db = database.database_utils()
 
-        if (lat == None or lng == None):
-            template = JINJA_ENVIRONMENT.get_template("addplace.html")
-            self.response.write(template.render(message = "Could not get location data."))   
-
         # Method checks if town exists.
         if (db.checkIfPlace(lat, lng) == False):
             db.addTown(town, state, country)
             db.addPlace(lat, lng, placeName, address, town, state, country, email, phone, website, description, placeType)
+
+            placeSpecific = {}
+            
+            if (placeType == "Pub/Bar"):
+                placeSpecific['craftBeer'] = self.request.get('craftBeer')
+                placeSpecific['beerGarden'] = self.request.get('beerGarden')
+                placeSpecific['rooftopDeck'] = self.request.get('rooftopDeck')
+                placeSpecific['pokies'] = self.request.get('pokies')
+                placeSpecific['sportsBar'] = self.request.get('sportsBar')
+                placeSpecific['atmosphere'] = self.request.get('atmosphere')
+                placeSpecific['animalPermitted'] = self.request.get('animalPermitted')
+                db.addPubInfo(placeSpecific, lat, lng)
+            else:
+                if (placeType == "Cafe"):
+                    placeSpecific['coffee'] = self.request.get('coffee')
+                    placeSpecific['tea'] = self.request.get('tea')
+                    placeSpecific['teaPot'] = self.request.get('teaPot')
+                    placeSpecific['sugar'] = self.request.get('sugar')
+                    placeSpecific['keepCupDiscount'] = self.request.get('keepCupDiscount')
+                    db.addCafeInfo(placeSpecific, lat, lng)
+                else:
+                    if (placeType == "Museum"):
+                        placeSpecific['entryFee'] = self.request.get('entryFee')
+                        placeSpecific['timeAllowed'] = self.request.get('timeAllowed')
+                        db.addMuseumInfo(placeSpecific, lat, lng)
+                    else:
+                        if (placeType == "Restaurant, Takeaway"):
+                            placeSpecific['value'] = self.request.get('value')
+                            placeSpecific['containers'] = self.request.get('containers')
+                            db.addTakeawayInfo(placeSpecific, lat, lng)
+
+            template = JINJA_ENVIRONMENT.get_template("addplace.html")
+            self.response.write(template.render(message = "Place successfully added."))
         else:
-            print("Place already exists.")
+            template = JINJA_ENVIRONMENT.get_template("addplace.html")
+            self.response.write(template.render(message = "Location already exists."))
+
+
+        
+
 
 def sendNewAccMail(senderAdd, recieverAdd, firstName, surname):
     mail.send_mail(sender = senderAdd, 
@@ -381,9 +447,6 @@ class LockLocation(BaseHandler):
         # Convert to six decimal places to match the schema.
         self.session['lat'] = "%.6f" % float(lat)
         self.session['lng'] = "%.6f" % float(lng)
-
-        logging.info(self.session['lat'])
-        logging.info(self.session['lng'])
 
         self.redirect('/')
 

@@ -53,7 +53,10 @@ function initMap() {
 		lockLocation.appendChild(reviewLng);
 		lockLocation.appendChild(submitButton);
 
-		document.getElementById("lockInLocation").appendChild(lockLocation);
+		if (document.getElementById("lockInLocation") != null) {
+			document.getElementById("lockInLocation").appendChild(lockLocation);
+		}
+		
 
 	} else {
 		//otherwise prints error

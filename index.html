@@ -15,8 +15,9 @@
 	  	<p id="signInStatus">Signed in as: {{user}}</p>
 		<form action="\signout"><input type="submit" value="Sign Out"></form>
     <form action="\addplace"><input type="submit" value = "Add Place"></form>
-    <form action="\review"><input type="submit" value="Review Location"></form>
+    <form action="\review"><input type="submit" value="Review Location"></form>  
     <div id="lockInLocation"></div>
+    <p>{{lock}}</p>
 	  {% else %}
 		<form action="\signup"><input type="submit" value="Sign Up"></form>
 		<form action="\login"><input type="submit" value="Login"></form>
@@ -24,6 +25,7 @@
 	  {% endif %}
     <img src = "https://storage.cloud.google.com/map-cc-assignment.appspot.com/bcmtitle.png" alt="Beer & Coffee Maps"/>
 	  <p id="locationStatus"></p>
+    <p>Logins Today: {{loginCount}}</p>
 	</div>
 
     <div id="map"></div>

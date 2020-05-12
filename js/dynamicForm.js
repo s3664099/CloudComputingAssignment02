@@ -289,7 +289,7 @@ function makeTakeawayForm(formElements) {
     formElements.push(placeType);
 
     var valueLabel = document.createElement("label");
-    valueLabel.innerHTML = "Value for Money:";
+    valueLabel.innerHTML = "Value for Money: ";
     formElements.push(valueLabel);
 
     var valueValues = ["Good", "Bad"];
@@ -297,7 +297,7 @@ function makeTakeawayForm(formElements) {
     formElements.push(document.createElement("br"));  
 
     var containerLabel = document.createElement("label");
-    containerLabel.innerHTML = "Container";
+    containerLabel.innerHTML = "Container: ";
     formElements.push(containerLabel);
 
     var containerValues = ["Styrofoam", "Cardboard", "Plastic"];

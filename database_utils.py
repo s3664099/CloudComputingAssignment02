@@ -183,6 +183,52 @@ class database_utils:
 		cur.execute(query)
 		self.db.commit()
 
+	def addPubInfo(self, placeSpecific, lat, lng):
+		cur = self.db.cursor()
+
+		query = "INSERT INTO infoBar (x_coord, y_coord, craftBeer, beerGarden, rooftopDeck, pokies, sportsBar, atmosphere, animalPermitted) \
+			 values (" + str(lat) + ", " + str(lng) + ", '" + placeSpecific["craftBeer"] + "', '" + placeSpecific["beerGarden"] \
+			+ "', '" + placeSpecific["rooftopDeck"] + "', '" + placeSpecific["pokies"] + "', '" + placeSpecific["sportsBar"] \
+			+ "', '" + placeSpecific['atmosphere'] + "', '" + placeSpecific['animalPermitted'] + "');"
+
+		logging.info(query)
+
+		cur.execute(query)
+		self.db.commit()
+
+	def addMuseumInfo(self, placeSpecific, lat, lng):
+		cur = self.db.cursor()
+
+		query = "INSERT INTO infoMuseum (x_coord, y_coord, entryFee, timeAllowed) \
+			values(" + str(lat) + ", " + str(lng) + ", '" + placeSpecific['entryFee'] + "', '" \
+			+ placeSpecific['timeAllowed'] + "');"
+
+		cur.execute(query)
+		self.db.commit()
+
+	def addCafeInfo(self, placeSpecific, lat, lng):
+		cur = self.db.cursor()
+
+		query = "INSERT INTO infoCafe (x_coord, y_coord, coffee, tea, teaPot, sugar, keepCupDiscount) \
+			values(" + str(lat) + ", " + str(lng) + ", '" + placeSpecific['coffee'] + "', '" + placeSpecific['tea'] \
+			+ "', '" + placeSpecific['teaPot'] + "', '" + placeSpecific['sugar'] + "', '" + placeSpecific['keepCupDiscount'] \
+			+ "');"
+
+		cur.execute(query)
+		self.db.commit()
+
+	def addTakeawayInfo(self, placeSpecific, lat, lng):
+		cur = self.db.cursor()
+
+		query = "INSERT INTO infoTakeaway (x_coord, y_coord, value, containers) \
+			values(" + str(lat) + ", " + str(lng) + ", '" + placeSpecific['value'] + "', '" \
+			+ placeSpecific['containers'] + "');"
+
+		cur.execute(query)
+		self.db.commit()
+
+
+
 
 
 
