@@ -13,6 +13,7 @@
 # limitations under the License.
 
 # [START gae_python_mysql_app]
+from __future__ import absolute_import
 from google.appengine.ext import ndb
 from google.appengine.api import mail
 
@@ -25,9 +26,17 @@ import jinja2
 import database_utils as database
 import logging
 import math
+import requests
+import json 
 
+# Getting this to work was a mess...
+# https://stackoverflow.com/questions/40886217/error-importing-google-cloud-bigquery-api-module-in-python-app
+# https://stackoverflow.com/questions/43085047/how-to-import-bigquery-in-appengine-for-python
 
 from webapp2_extras import sessions
+from google.cloud import bigquery
+from requests_toolbelt.adapters import appengine
+appengine.monkeypatch()
 
 #This function sets up the jinj enviroment
 JINJA_ENVIRONMENT = jinja2.Environment(
@@ -81,11 +90,26 @@ class MainPage(BaseHandler):
         #These are the values that wull be used by the HTML file
         template_values = {}
 
+        client = bigquery.Client()
+
+        query = """
+            SELECT count(*) FROM `map-cc-assignment.LoginData.appengine_googleapis_com_request_log_20200512` 
+            where DATE(timestamp) = CURRENT_DATE LIMIT 1000;
+        """
+        query_job = client.query(query)
+        results = query_job.result()
+
+        dailyLogins = 0
+
+        for row in results:
+            dailyLogins = row.f0_
+
         if search.locale_type != "":
             template_values = MainPage.perform_search(self)
 
         userKey = self.session.get('user')
         template_values['user'] = userKey
+        template_values['loginCount'] = dailyLogins
 
 
         #This code sends the template values to the HTML file.
@@ -324,7 +348,7 @@ class Review(BaseHandler):
             review = self.request.get('review')
 
             db.addReview(lat, lng, userKey, liked, review)
-            self.redirect('/')
+            self.redirect('/') 
         else:
             template = JINJA_ENVIRONMENT.get_template("review.html")
             self.response.write(template.render(message = "No place was detected at your location. Please add your place before reviewing."))
