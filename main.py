@@ -120,7 +120,12 @@ class MainPage(BaseHandler):
             self.session['lockError'] = False
 
         userKey = self.session.get('user')
-        template_values['user'] = userKey
+
+        if (userKey != None):
+            user_key = ndb.Key("User", userKey)
+            user = user_key.get()
+            template_values['user'] = user.firstName
+
         template_values['loginCount'] = dailyLogins
 
 
@@ -328,8 +333,10 @@ class Review(BaseHandler):
             self.session['lockError'] = True
             self.redirect('/')
         else:
+            db = database.database_utils()
             template = JINJA_ENVIRONMENT.get_template("review.html")
-            self.response.write(template.render())
+            reviews = db.getReviews(self.session.get('lat'), self.session.get('lng'))
+            self.response.write(template.render(reviews = reviews))
         
 
     def post(self):
@@ -359,13 +366,24 @@ class Review(BaseHandler):
                 trueLiked = 0
 
             review = self.request.get('review')
+            userKey = self.session.get('user')
+            user_key = ndb.Key("User", userKey)
+            user = user_key.get()
 
-            db.addReview(lat, lng, userKey, liked, review)
-            template = JINJA_ENVIRONMENT.get_template("review.html")
-            self.response.write(template.render(message = "Review successfully submitted!"))
+            try:
+                db.addReview(lat, lng, userKey, user.firstName, user.surname, liked, review)
+                template = JINJA_ENVIRONMENT.get_template("review.html")
+                reviews = db.getReviews(self.session.get('lat'), self.session.get('lng'))
+                self.response.write(template.render(message = "Review successfully submitted!", reviews = reviews))
+            except:
+                template = JINJA_ENVIRONMENT.get_template("review.html")
+                reviews = db.getReviews(self.session.get('lat'), self.session.get('lng'))
+                self.response.write(template.render(message = "You've already submitted a review for this location!", reviews = reviews))
         else:
             template = JINJA_ENVIRONMENT.get_template("review.html")
-            self.response.write(template.render(message = "No place was detected at your location. Please add your place before reviewing."))
+            reviews = db.getReviews(self.session.get('lat'), self.session.get('lng'))
+            self.response.write(template.render(message = "No place was detected at your location. Please add your place before reviewing.",
+            reviews = reviews))
 
 class AddPlace(BaseHandler):
     def get(self):
@@ -373,11 +391,16 @@ class AddPlace(BaseHandler):
             self.session['lockError'] = True
             self.redirect('/')
         else:
-            template = JINJA_ENVIRONMENT.get_template("addplace.html")
-            self.response.write(template.render())
+            db = database.database_utils()
+            if (db.checkIfPlace(self.session.get('lat'), self.session.get('lng'))):
+                place = db.getPlaceInfo(self.session.get('lat'), self.session.get('lng'))
+                template = JINJA_ENVIRONMENT.get_template("addplace.html")
+                self.response.write(template.render(place = place)) 
+            else:
+                template = JINJA_ENVIRONMENT.get_template("addplace.html")
+                self.response.write(template.render())
 
     def post(self):
-        # self.response.write(self.request.POST)
         lat = self.session.get('lat')
         lng = self.session.get('lng')
         placeName = self.request.get('placeName')
@@ -433,9 +456,6 @@ class AddPlace(BaseHandler):
         else:
             template = JINJA_ENVIRONMENT.get_template("addplace.html")
             self.response.write(template.render(message = "Location already exists."))
-
-
-        
 
 
 def sendNewAccMail(senderAdd, recieverAdd, firstName, surname):

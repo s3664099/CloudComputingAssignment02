@@ -122,16 +122,18 @@ class database_utils:
 
 		return cur.fetchall()
 
-	def addReview(self, lat, lng, username, liked, review):
+	def addReview(self, lat, lng, username, firstName, surname, liked, review):
 		cur = self.db.cursor()
+		review = self.db.escape_string(review)
 
 		if liked == "Yes":
 			liked = 1
 		else:
 			liked = 0
 
-		query = "INSERT into rating(x_coord, y_coord, username, liked, review) \
-			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + username + "', '" + str(liked) + "', '" + review + "');"
+		query = "INSERT into rating(x_coord, y_coord, username, firstName, surname, liked, review) \
+			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + username + "', '" + firstName + "', '" \
+			+ surname + "', '" + str(liked) + "', '" + review + "');"
 
 		cur.execute(query)
 		self.db.commit()
@@ -174,6 +176,15 @@ class database_utils:
 
 	def addPlace(self, lat, lng, placeName, address, town, state, country, email, phone, website, description, placeType):
 		cur = self.db.cursor()
+		placeName = self.db.escape_string(placeName)
+		address = self.db.escape_string(address)
+		town = self.db.escape_string(town)
+		state = self.db.escape_string(state)
+		country = self.db.escape_string(country)
+		email = self.db.escape_string(email)
+		phone = self.db.escape_string(phone)
+		email = self.db.escape_string(website)
+		description = self.db.escape_string(description)
 
 		query = "INSERT INTO place (x_coord, y_coord, localeName, address, town, state, email, telephone, website, likes, dislikes, description, localtype) \
 				values (" + str(lat) + ", " + str(lng) + ", '" + placeName + "', '"  + address + "', '" + town + "', '" \
@@ -191,14 +202,11 @@ class database_utils:
 			+ "', '" + placeSpecific["rooftopDeck"] + "', '" + placeSpecific["pokies"] + "', '" + placeSpecific["sportsBar"] \
 			+ "', '" + placeSpecific['atmosphere'] + "', '" + placeSpecific['animalPermitted'] + "');"
 
-		logging.info(query)
-
 		cur.execute(query)
 		self.db.commit()
 
 	def addMuseumInfo(self, placeSpecific, lat, lng):
 		cur = self.db.cursor()
-
 		query = "INSERT INTO infoMuseum (x_coord, y_coord, entryFee, timeAllowed) \
 			values(" + str(lat) + ", " + str(lng) + ", '" + placeSpecific['entryFee'] + "', '" \
 			+ placeSpecific['timeAllowed'] + "');"
@@ -208,7 +216,6 @@ class database_utils:
 
 	def addCafeInfo(self, placeSpecific, lat, lng):
 		cur = self.db.cursor()
-
 		query = "INSERT INTO infoCafe (x_coord, y_coord, coffee, tea, teaPot, sugar, keepCupDiscount) \
 			values(" + str(lat) + ", " + str(lng) + ", '" + placeSpecific['coffee'] + "', '" + placeSpecific['tea'] \
 			+ "', '" + placeSpecific['teaPot'] + "', '" + placeSpecific['sugar'] + "', '" + placeSpecific['keepCupDiscount'] \
@@ -219,13 +226,27 @@ class database_utils:
 
 	def addTakeawayInfo(self, placeSpecific, lat, lng):
 		cur = self.db.cursor()
-
 		query = "INSERT INTO infoTakeaway (x_coord, y_coord, value, containers) \
 			values(" + str(lat) + ", " + str(lng) + ", '" + placeSpecific['value'] + "', '" \
 			+ placeSpecific['containers'] + "');"
 
 		cur.execute(query)
 		self.db.commit()
+
+	def getPlaceInfo(self, lat, lng):
+		cur = self.db.cursor()
+		query = "SELECT * FROM place WHERE x_coord = '" + str(lat) + "' AND y_coord = '" + str(lng) + "';"
+		cur.execute(query)
+		results = cur.fetchall()
+		return results
+
+	def getReviews(self, lat, lng):
+		cur = self.db.cursor()
+		query = "SELECT * FROM rating WHERE x_coord = '" + str(lat) + "' AND y_coord = '" + str(lng) + "';"
+		cur.execute(query)
+		results = cur.fetchall()
+		return results
+
 
 
 
