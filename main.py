@@ -27,7 +27,8 @@ import database_utils as database
 import logging
 import math
 import requests
-import json 
+import json
+from datetime import datetime 
 
 # Getting this to work was a mess...
 # https://stackoverflow.com/questions/40886217/error-importing-google-cloud-bigquery-api-module-in-python-app
@@ -92,18 +93,24 @@ class MainPage(BaseHandler):
         template_values = {}
 
         client = bigquery.Client()
-
-        query = """
-            SELECT count(*) FROM `map-cc-assignment.LoginData.appengine_googleapis_com_request_log_20200512` 
-            where DATE(timestamp) = CURRENT_DATE LIMIT 1000;
-        """
-        query_job = client.query(query)
-        results = query_job.result()
-
+        tablecode = datetime.now().strftime('%Y%m%d')
         dailyLogins = 0
 
-        for row in results:
-            dailyLogins = row.f0_
+        try:
+            query = """
+            SELECT count(*) FROM `map-cc-assignment.LoginData.appengine_googleapis_com_request_log_""" + tablecode + """` 
+            where DATE(timestamp) = CURRENT_DATE LIMIT 1000;
+            """
+            query_job = client.query(query)
+            results = query_job.result()
+
+            dailyLogins = 0
+
+            for row in results:
+                dailyLogins = row.f0_
+
+        except:
+            pass
 
         if search.locale_type != "":
             template_values = MainPage.perform_search(self)
