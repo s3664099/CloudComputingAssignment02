@@ -1,4 +1,5 @@
 google-api-python-client
 google-cloud-bigquery
+googletrans
 pyopenssl
 requests_toolbelt

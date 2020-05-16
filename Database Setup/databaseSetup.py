@@ -93,15 +93,16 @@ def createTables(conn):
 		cur.execute("CREATE TABLE place (x_coord DECIMAL (9,6), y_coord DECIMAL (9,6), localeName VARCHAR(255), address VARCHAR(255)\
 					, town VARCHAR(20), state VARCHAR(30), email VARCHAR(100), telephone VARCHAR(30), website VARCHAR(100),\
 					 likes INTEGER(5), dislikes INTEGER(5), currentopen BOOLEAN, description TEXT(5000), descript_de TEXT(5000),\
-					 descript_fr TEXT(5000), descript_it TEXT(5000), localtype VARCHAR(30),\
-					 picture VARCHAR(20), PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (localtype) REFERENCES localtype(localtype),\
-					 FOREIGN KEY (town, state) REFERENCES location(town, state))")
+					 descript_fr TEXT(5000), descript_it TEXT(5000), descript_en TEXT(5000), localtype VARCHAR(30),\
+					 picture VARCHAR(20), translated BOOLEAN, PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (localtype) \
+					 REFERENCES localtype(localtype), FOREIGN KEY (town, state) REFERENCES location(town, state))")
 	except pymysql.Error as e:
 		print("Error Place: ",e)
 
 	try:
 		cur.execute("CREATE TABLE rating(x_coord DECIMAL (9,6), y_coord DECIMAL (9,6), username VARCHAR(30),\
-				 	liked BOOLEAN, review TEXT(5000), PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (x_coord, y_coord)\
+				 	liked BOOLEAN, review TEXT(5000), review_it TEXT(5000), review_de TEXT(5000), review_fr TEXT(5000), \
+				 	review_en TEXT(5000), translated BOOLEAN, PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (x_coord, y_coord)\
 				 	REFERENCES place(x_coord, y_coord))")
 	except pymysql.Error as e:
 		print("Error rating: ",e)
@@ -220,24 +221,19 @@ def loadDataFile(conn):
 				else:
 					isOpen = False
 
-				de_description = translate(fields[13], german)
-				fr_description = translate(fields[13], french)
-				it_description = translate(fields[13], italian)
-
-
-
+#				print(fr_description)
+#				print(fields[13])
 				if (isOpen == True):
 					cur.execute("INSERT INTO place(localename,x_coord,y_coord, address, town, state, telephone, \
-								website,currentopen, localtype, likes, dislikes, description, descript_de, descript_it,\
-								 descript_fr) VALUES ('"+fields[0]+"','"+str(x_coord)+"','"+str(y_coord)+"',\
+								website,currentopen, localtype, likes, dislikes, description) VALUES ('"+fields[0]+"','"+str(x_coord)+"','"+str(y_coord)+"',\
 								 '"+fields[1]+"','"+fields[2]+"','"+fields[3]+"','"+fields[5]+"','"+fields[6]+"',\
-								 '"+fields[12]+"','"+fields[10]+"','"+str(likes)+"','"+str(dislikes)+"','"+fields[13]+"\
-								 ','"+de_description+"','"+it_description+"','"+fr_description+"')")
+								 '"+fields[12]+"','"+fields[10]+"','"+str(likes)+"','"+str(dislikes)+"','"+fields[13]+"')")
 				else:
 					cur.execute("INSERT INTO place(localename,x_coord,y_coord, address, town, state, telephone, website,localtype,\
-								 likes, dislikes, description) VALUES ('"+fields[0]+"','"+str(x_coord)+"','"+str(y_coord)+"','"+fields[1]+
-								 "','"+fields[2]+"','"+fields[3]+"','"+fields[5]+"','"+fields[6]+"','"+fields[10]+"','"+str(likes)+
-								 "','"+str(dislikes)+"','"+fields[13]+"')")
+								 likes, dislikes, description) \
+								 VALUES ('"+fields[0]+"','"+str(x_coord)+"','"+str(y_coord)+"','"+fields[1]+"','"+fields[2]+"','\
+								 "+fields[3]+"','"+fields[5]+"','"+fields[6]+"','"+fields[10]+"','"+str(likes)+"','\
+								 "+str(dislikes)+"','"+fields[13]+"')")
 			except pymysql.Error as e:
 				print(str(number)+") Error: "+str(e))
 				i=1
@@ -295,9 +291,6 @@ def extraTables(conn):
 					PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (x_coord, y_coord) REFERENCES place(x_coord, y_coord))")
 	except pymysql.Error as e:
 		print("Error infoTakeaway: ",e)
-
-
-
 		
 #This function exists to test that the contents of the database were updated sufficiently
 #Also for error handling
@@ -321,6 +314,7 @@ def testQuery(conn):
 
 		for localename, x_coord, y_coord,description, de_description, fr_description, it_description in cur.fetchall():
 			number+=1
+
 			print(str(number)+") "+localename+" "+str(x_coord)+","+str(y_coord))
 			print("English: "+description)
 			print("German: "+str(de_description))
@@ -329,8 +323,37 @@ def testQuery(conn):
 	except pymysql.Error as e:
 		print("Error: ",e)
 
-	cur.execute("SELECT localename, x_coord, y_coord FROM place WHERE localtype='Airport'")
-	print(cur.fetchall())
+	#cur.execute("SELECT localename, x_coord, y_coord FROM place WHERE localtype='Airport'")
+	#print(cur.fetchall())
+
+def translate(conn):
+	cur = conn.cursor()
+	point = 0
+	try:
+		cur.execute("SELECT x_coord, y_coord, description FROM place")
+
+		for x_coord, y_coord, description in cur.fetchall():
+			descript_fr = translate_client.translate(description, french)
+			descript_it = translate_client.translate(description, italian)
+			descript_de = translate_client.translate(description, german)
+			description = description.replace("'","\\'")
+			descript_fr['translatedText'] = descript_fr['translatedText'].replace("&#39;","\\'")
+			descript_it['translatedText'] = descript_it['translatedText'].replace("&#39;","\\'")
+
+			try:
+				cur.execute("UPDATE place SET descript_de = '"+descript_de['translatedText']+"', descript_fr = '"+descript_fr['translatedText']+"'\
+					, descript_it = '"+descript_it['translatedText']+"', descript_en = '"+description+"', translated = '1'\
+					WHERE x_coord = "+str(x_coord)+" and y_coord = "+str(y_coord))
+			except pymysql.Error as e:
+				print("Error: ",e)
+			
+			print(point)
+			point+=1
+
+	except pymysql.Error as e:
+		print("Error: ",e)
+	
+	conn.commit()
 
 print("Connecting")
 #The main function. The database is opened, and the functions are executed
@@ -345,6 +368,7 @@ cur.execute('SET character_set_connection=utf8')
 #clearDatabases(myConnection)
 #createTables(myConnection)
 #loadDataFile(myConnection)
+#translate(myConnection)
 testQuery(myConnection)
 myConnection.close()
 

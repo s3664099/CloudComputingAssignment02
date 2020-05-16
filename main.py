@@ -35,6 +35,7 @@ import json
 
 from webapp2_extras import sessions
 from google.cloud import bigquery
+from googletrans import Translator
 from requests_toolbelt.adapters import appengine
 appengine.monkeypatch()
 
@@ -45,10 +46,15 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
+translate_client = Translator()
+
 #Establish a class to hold variables pulled from the static HTML page
 class search ():
     locale_type = "All"
     locale_place = "Sunbury"
+
+class language():
+    language = 'en'
 
 class User(ndb.Model):
     """Models a user."""
@@ -106,7 +112,7 @@ class MainPage(BaseHandler):
             dailyLogins = row.f0_
 
         if search.locale_type != "":
-            template_values = MainPage.perform_search(self)
+            template_values = MainPage.perform_search(self, language.language)
 
         if (self.session.get('lockError') == True):
             template_values['lock'] = "Please lock your location before reviewing or adding your location."
@@ -116,7 +122,6 @@ class MainPage(BaseHandler):
         template_values['user'] = userKey
         template_values['loginCount'] = dailyLogins
 
-
         #This code sends the template values to the HTML file.
         #The first line sets up the template values, the second line renders the webpage.
         template = JINJA_ENVIRONMENT.get_template('index.html')
@@ -125,7 +130,7 @@ class MainPage(BaseHandler):
 #    def database_manip(self, db):
 
     #This function is where all of the database searches are performed
-    def perform_search(self):
+    def perform_search(self, language):
 
         #Set up the values to be used in this function
         locations = []
@@ -138,7 +143,7 @@ class MainPage(BaseHandler):
 
         #Now that we have performed the queries, the results are processed and stored
         #in the dictionary which is then passed back to the main function
-        for x_coord, y_coord, likes, localeName, description, icon in results:
+        for x_coord, y_coord, likes, localeName, description_fr, icon in results:
 
             rating = 0
 
@@ -159,13 +164,64 @@ class MainPage(BaseHandler):
                 "rating": rating,
                 "icon": icon,
                 "name": localeName,
-                "description": description
+                "description": description_fr
                 }
             locations.append(location_details) 
 
         #The results are stored in the template values for use on the webpage
 
+        if language == 'de':
+            login = "Anmeldung"
+            signup = "Anmelden"
+            signout = "Ausloggen"
+            addplace = u"Platz hinzuf\xfcgen"
+            reviewlocation = u"Ort \xfcberpr\xfcfen"
+            nosignin = "Nicht eingeloggt"
+            yessignin = "Eingeloggt als"
+            lang = "Sprache"
+        elif language == 'fr':
+            login = "S'identifier"
+            signup = "S'inscrire"
+            signout = u"D\xe9connexion"
+            addplace = "Ajouter un lieu"
+            reviewlocation = u"V\xe9rifier l'emplacement"
+            nosignin = u"Pas connect\xe9"
+            yessignin = u"Connect\xe9 en tant que"
+            lang = "Langue"
+        elif language == 'it':
+            login = "Accesso"
+            signup = "Iscriviti"
+            signout = "Disconnessione"
+            addplace = "Aggiungi luogo"
+            reviewlocation = "Rivedi posizione"
+            nosignin = "Non registrato"
+            yessignin = "Accesso come"
+            lang = "linguaggio"
+        else:
+            login = "Login"
+            signup = "Sign Up"
+            signout = "Sign Out"
+            addplace = "Add Place"
+            reviewlocation = "Review Location"
+            nosignin = "Not signed in"
+            yessignin = "Signed in as"
+            lang = "Language"
+
+
+        main_page = {
+            "login": login,
+            "signup": signup,
+            "signout": signout,
+            "addplace": addplace,
+            "reviewlocation": reviewlocation,
+            "nosignin": nosignin,
+            "yessignin": yessignin,
+            "lang": lang,
+            "lang_set": language
+        }
+
         template_values['location_details'] = locations
+        template_values['main_page'] = main_page
            
         return template_values
 
@@ -307,6 +363,13 @@ class SignUpPage(webapp2.RequestHandler):
                 self.response.write(template.render(firstNameError = firstNameError, surnameError = surnameError, 
                 emailError = emailError, passwordError = passwordError))
 
+class Language(BaseHandler):
+    def post(self):
+        language.language = self.request.get("language") 
+        #language.Language = 'de'
+        self.redirect('/')
+
+
 class SignOut(BaseHandler):
     def get(self):
         self.session['user'] = None
@@ -427,10 +490,6 @@ class AddPlace(BaseHandler):
             template = JINJA_ENVIRONMENT.get_template("addplace.html")
             self.response.write(template.render(message = "Location already exists."))
 
-
-        
-
-
 def sendNewAccMail(senderAdd, recieverAdd, firstName, surname):
     mail.send_mail(sender = senderAdd, 
     to = firstName + " " + surname + " <" + recieverAdd + ">",
@@ -467,7 +526,8 @@ app = webapp2.WSGIApplication([
     ('/signout', SignOut),
     ('/review', Review),
     ('/addplace', AddPlace),
-    ('/locklocation', LockLocation)
+    ('/locklocation', LockLocation),
+    ('/change_language', Language)
 ], debug=True, config=config)
 
 # [END gae_python_mysql_app]

@@ -78,7 +78,7 @@ class database_utils:
 	def get_all_locations(self):
 		cur = self.db.cursor()
 			
-		cur.execute("SELECT place.x_coord, place.y_coord, place.likes, place.localeName, place.description, localtype.icon FROM \
+		cur.execute("SELECT place.x_coord, place.y_coord, place.likes, place.localeName, place.descript_fr, localtype.icon FROM \
 					place INNER JOIN localtype ON place.localtype=localtype.localtype")
 
 		return cur.fetchall()
@@ -130,6 +130,8 @@ class database_utils:
 		else:
 			liked = 0
 
+		#Add translate function here
+
 		query = "INSERT into rating(x_coord, y_coord, username, liked, review) \
 			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + username + "', '" + str(liked) + "', '" + review + "');"
 
@@ -174,6 +176,8 @@ class database_utils:
 
 	def addPlace(self, lat, lng, placeName, address, town, state, country, email, phone, website, description, placeType):
 		cur = self.db.cursor()
+
+		#Add translate function here
 
 		query = "INSERT INTO place (x_coord, y_coord, localeName, address, town, state, email, telephone, website, likes, dislikes, description, localtype) \
 				values (" + str(lat) + ", " + str(lng) + ", '" + placeName + "', '"  + address + "', '" + town + "', '" \
