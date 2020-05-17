@@ -27,7 +27,8 @@ import database_utils as database
 import logging
 import math
 import requests
-import json 
+import json
+import trans_utils as translate 
 
 # Getting this to work was a mess...
 # https://stackoverflow.com/questions/40886217/error-importing-google-cloud-bigquery-api-module-in-python-app
@@ -35,7 +36,6 @@ import json
 
 from webapp2_extras import sessions
 from google.cloud import bigquery
-from googletrans import Translator
 from requests_toolbelt.adapters import appengine
 appengine.monkeypatch()
 
@@ -45,8 +45,6 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
-
-translate_client = Translator()
 
 #Establish a class to hold variables pulled from the static HTML page
 class search ():
@@ -170,55 +168,7 @@ class MainPage(BaseHandler):
 
         #The results are stored in the template values for use on the webpage
 
-        if language == 'de':
-            login = "Anmeldung"
-            signup = "Anmelden"
-            signout = "Ausloggen"
-            addplace = u"Platz hinzuf\xfcgen"
-            reviewlocation = u"Ort \xfcberpr\xfcfen"
-            nosignin = "Nicht eingeloggt"
-            yessignin = "Eingeloggt als"
-            lang = "Sprache"
-        elif language == 'fr':
-            login = "S'identifier"
-            signup = "S'inscrire"
-            signout = u"D\xe9connexion"
-            addplace = "Ajouter un lieu"
-            reviewlocation = u"V\xe9rifier l'emplacement"
-            nosignin = u"Pas connect\xe9"
-            yessignin = u"Connect\xe9 en tant que"
-            lang = "Langue"
-        elif language == 'it':
-            login = "Accesso"
-            signup = "Iscriviti"
-            signout = "Disconnessione"
-            addplace = "Aggiungi luogo"
-            reviewlocation = "Rivedi posizione"
-            nosignin = "Non registrato"
-            yessignin = "Accesso come"
-            lang = "linguaggio"
-        else:
-            login = "Login"
-            signup = "Sign Up"
-            signout = "Sign Out"
-            addplace = "Add Place"
-            reviewlocation = "Review Location"
-            nosignin = "Not signed in"
-            yessignin = "Signed in as"
-            lang = "Language"
-
-
-        main_page = {
-            "login": login,
-            "signup": signup,
-            "signout": signout,
-            "addplace": addplace,
-            "reviewlocation": reviewlocation,
-            "nosignin": nosignin,
-            "yessignin": yessignin,
-            "lang": lang,
-            "lang_set": language
-        }
+        main_page = translate.main_page(language)
 
         template_values['location_details'] = locations
         template_values['main_page'] = main_page

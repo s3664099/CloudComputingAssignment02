@@ -13,14 +13,14 @@
 	  
 	  {% if user is not none%}
 	  	<p id="signInStatus">{{main_page.yessignin}}: {{user}}</p>
-		<form action="\signout"><input type="submit" value={{main_page.signout}}></form>
-    <form action="\addplace"><input type="submit" value = {{main_page.addplace}}></form>
-    <form action="\review"><input type="submit" value={{main_page.reviewlocation}}></form>  
+		<form action="\signout"><input type="submit" value="{{main_page.signout}}"></form>
+    <form action="\addplace"><input type="submit" value = "{{main_page.addplace}}"></form>
+    <form action="\review"><input type="submit" value="{{main_page.reviewlocation}}"></form>  
     <div id="lockInLocation"></div>
     <p>{{lock}}</p>
 	  {% else %}
-		<form action="\signup"><input type="submit" value={{main_page.signup}}></form>
-		<form action="\login"><input type="submit" value={{main_page.login}}></form>
+		<form action="\signup"><input type="submit" value="{{main_page.signup}}"></form>
+		<form action="\login"><input type="submit" value="{{main_page.login}}"></form>
 		<p id="signInStatus">{{main_page.nosignin}}.</p>
 	  {% endif %}
     <img src = "https://storage.cloud.google.com/map-cc-assignment.appspot.com/bcmtitle.png" alt="Beer & Coffee Maps"/>

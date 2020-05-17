@@ -19,6 +19,49 @@ using App Engine's native unix socket or using TCP when running locally.
 For more information, see the README.md.
 """
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import MySQLdb
 import os
 import logging
@@ -230,8 +273,6 @@ class database_utils:
 
 		cur.execute(query)
 		self.db.commit()
-
-
 
 
 
