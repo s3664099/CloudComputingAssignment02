@@ -109,6 +109,14 @@ class database_utils:
 
 		return cur.fetchall()
 
+	def get_all_visited(self):
+		cur = self.db.cursor()
+
+		cur.execute("SELECT x_coord, y_coord FROM place WHERE description <> '' or description <> NULL")
+		
+		return cur.fetchall()
+
+
 	def get_all_with_rating(self):
 		cur = self.db.cursor()
 
@@ -131,6 +139,17 @@ class database_utils:
 
 		return cur.fetchall()
 
+	def get_all_open_type(self, place_type, lang):
+		cur = self.db.cursor()
+
+		selected_language = translate.get_db_language(lang)
+
+		cur.execute("SELECT place.x_coord, place.y_coord, place.likes, place.localeName, place."+selected_language+", \
+					localtype.icon FROM place INNER JOIN localtype ON place.localtype=localtype.localtype WHERE \
+					place.currentopen = 1 AND "+place_type)
+
+		return cur.fetchall()
+
 	def addReview(self, lat, lng, username, liked, review):
 		cur = self.db.cursor()
 
@@ -139,11 +158,17 @@ class database_utils:
 		else:
 			liked = 0
 
+		"""	
 		descriptions = translate.get_description(review)
 
 		query = "INSERT into rating(x_coord, y_coord, username, liked, review, review_it, review_de, review_fr, review_en \
 			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + username + "', '" + str(liked) + "', '" + review + "'\
 			'"+descriptions["italian"]+"', '"+descriptions["german"]+"','"+descriptions["french"]+"','"+descriptions["english"]+"');"
+		"""
+
+		query = "INSERT into rating(x_coord, y_coord, username, liked, review, review_it, review_de, review_fr, review_en \
+			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + username + "', '" + str(liked) + "', '" + review + "');"
+
 
 		cur.execute(query)
 		self.db.commit()
@@ -186,6 +211,7 @@ class database_utils:
 	def addPlace(self, lat, lng, placeName, address, town, state, country, email, phone, website, description, placeType):
 		cur = self.db.cursor()
 
+		"""
 		descriptions = translate.get_description(description)
 
 		query = "INSERT INTO place (x_coord, y_coord, localeName, address, town, state, email, telephone, website, likes, \
@@ -194,7 +220,14 @@ class database_utils:
 				+ state + "', '" + email + "', '" + phone + "', '" + website + "', " + str(0) + ", " + str(0) + ", '" \
 				+ description + "', '"+descriptions["german"]+"', '"+descriptions["french"]+"','"+descriptions["italian"]+"',\
 				'"+descriptions["english"]+"','" + placeType + "');"
+		"""
 		
+		query = "INSERT INTO place (x_coord, y_coord, localeName, address, town, state, email, telephone, website, likes, \
+				dislikes, description, descript_de, descript_fr, descript_it, descript_en, localtype) \
+				values (" + str(lat) + ", " + str(lng) + ", '" + placeName + "', '"  + address + "', '" + town + "', '" \
+				+ state + "', '" + email + "', '" + phone + "', '" + website + "', " + str(0) + ", " + str(0) + ", '" \
+				+ description + "','" + placeType + "');"
+
 		cur.execute(query)
 		self.db.commit()
 

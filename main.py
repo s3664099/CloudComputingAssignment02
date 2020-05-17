@@ -54,6 +54,9 @@ class search ():
 class language():
     language = 'en'
 
+class show_locations():
+	selection = "everything"
+
 class User(ndb.Model):
     """Models a user."""
     firstName = ndb.StringProperty()
@@ -134,10 +137,23 @@ class MainPage(BaseHandler):
         locations = []
         location_details = {}
         template_values = {}
+        visited = False
+        results = None
 
         db = database.database_utils()
 
-        results = db.get_all_locations(language)
+        if show_locations.selection == "visited":
+            results = db.get_all_open_locations(language)
+            visited_results = db.get_all_visited()
+            visited = True
+        elif show_locations.selection == "beer":
+            results = db.get_all_open_type("place.localtype = 'Pub/Bar'", language)
+        elif show_locations.selection == "coffee":
+            results = db.get_all_open_type("place.localtype = 'Cafe'", language)
+        elif show_locations.selection == "beercoffee":
+            results = db.get_all_open_type("place.localtype = 'Cafe' OR place.localtype = 'Pub/Bar'", language)
+        else:
+            results = db.get_all_open_locations(language)
 
         #Now that we have performed the queries, the results are processed and stored
         #in the dictionary which is then passed back to the main function
@@ -166,11 +182,20 @@ class MainPage(BaseHandler):
                 }
             locations.append(location_details) 
 
+        if visited == True:   
+            for x_coord, y_coord in visited_results:
+                visited_places = {
+                    "x_coord": x_coord,
+                    "y_coord": y_coord
+                }
+            template_values['visited_places'] = visited_places
+
         #The results are stored in the template values for use on the webpage
 
         main_page = translate.main_page(language)
 
         template_values['location_details'] = locations
+        template_values['visit_selected'] = visited
         template_values['main_page'] = main_page
            
         return template_values
@@ -459,6 +484,22 @@ class LockLocation(BaseHandler):
 
         self.redirect('/')
 
+class Change_locations(BaseHandler):
+	def post(self):
+
+		option = self.request.get("location")
+		if option == "beer":
+			show_locations.selection = "beer"
+		elif option == "coffee":
+			show_locations.selection = "coffee"
+		elif option == "beercoffee":
+			show_locations.selection = "beercoffee"
+		elif option == "visited":
+			show_locations.selection = "visited"
+		else:
+			show_locations.selection = "everything"
+
+		self.redirect('/')
 
 
 # Config for Session Storage.
@@ -477,7 +518,8 @@ app = webapp2.WSGIApplication([
     ('/review', Review),
     ('/addplace', AddPlace),
     ('/locklocation', LockLocation),
-    ('/change_language', Language)
+    ('/change_language', Language),
+    ('/show_locations', Change_locations)
 ], debug=True, config=config)
 
 # [END gae_python_mysql_app]

@@ -103,6 +103,17 @@ function initMap() {
 	    markers.push(marker);
 	}
 
+	if (visited == true) {
+		for (i = 0; i<visited_locations.length; i++) {
+			var marker = new google.maps.Marker({position: {lat: visited_locations[i].x_coord, lng: visited_locations[i].y_coord},
+			map: map
+			});
+			marker.setMap(map)
+
+			console.log(visited_locations[i].x_coord, lng: visited_locations[i].y_coord);
+		}
+	}
+
 	//Adds a listener to check to see whether the map has been zoomed
 	map.addListener('zoom_changed', function() {
 		zoom = map.getZoom();

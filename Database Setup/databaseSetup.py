@@ -297,6 +297,7 @@ def extraTables(conn):
 def testQuery(conn):
 	cur = conn.cursor()
 
+	"""
 	try:
 		cur.execute("SHOW TABLES")
 
@@ -325,6 +326,17 @@ def testQuery(conn):
 
 	#cur.execute("SELECT localename, x_coord, y_coord FROM place WHERE localtype='Airport'")
 	#print(cur.fetchall())
+	"""
+
+	try:
+		cur.execute("SELECT localename, x_coord, y_coord, description FROM place WHERE description <> '' or description <> NULL")
+	except pymysql.Error as e:
+		print("Error: ",e)
+
+	for localename, x_coord,y_coord, description in cur.fetchall():
+		print(localename, x_coord, y_coord)
+		print(description)
+
 
 def translate(conn):
 	cur = conn.cursor()
