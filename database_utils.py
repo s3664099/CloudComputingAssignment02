@@ -19,52 +19,10 @@ using App Engine's native unix socket or using TCP when running locally.
 For more information, see the README.md.
 """
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import MySQLdb
 import os
 import logging
+import trans_utils as translate
 
 class database_utils:
 
@@ -118,28 +76,34 @@ class database_utils:
 		return self.db
 
 	#The SQL queries that will be called from the database
-	def get_all_locations(self):
+	def get_all_locations(self, lang):
 		cur = self.db.cursor()
+
+		selected_language = translate.get_db_language(lang)
 			
-		cur.execute("SELECT place.x_coord, place.y_coord, place.likes, place.localeName, place.descript_fr, localtype.icon FROM \
+		cur.execute("SELECT place.x_coord, place.y_coord, place.likes, place.localeName, place."+selected_language+", localtype.icon FROM \
 					place INNER JOIN localtype ON place.localtype=localtype.localtype")
 
 		return cur.fetchall()
 
-	def get_all_open_locations(self):
+	def get_all_open_locations(self, lang):
 		cur = self.db.cursor()
 
-		cur.execute("SELECT place.x_coord, place.y_coord, place.likes, localtype.icon FROM \
-					place INNER JOIN localtype ON place.localtype=localtype.localtype WHERE \
+		selected_language = translate.get_db_language(lang)
+
+		cur.execute("SELECT place.x_coord, place.y_coord, place.likes,  place.localeName, place."+selected_language+", \
+					localtype.icon FROM place INNER JOIN localtype ON place.localtype=localtype.localtype WHERE \
 					place.currentopen = 1")
 
 		return cur.fetchall()
 
-	def get_all_open_in_area(self, left_long, up_lat, right_long, bottom_lat):
+	def get_all_open_in_area(self, left_long, up_lat, right_long, bottom_lat, lang):
 		cur = self.db.cursor()
 
-		cur.execute("SELECT place.localename, place.x_coord, place.y_coord, place.likes, localtype.icon FROM \
-			place INNER JOIN localtype ON place.localtype=localtype.localtype WHERE \
+		selected_language = translate.get_db_language(lang)
+
+		cur.execute("SELECT place.localename, place.x_coord, place.y_coord, place.likes, place.localeName, place."+selected_language+", \
+			localtype.icon FROM place INNER JOIN localtype ON place.localtype=localtype.localtype WHERE \
 			place.currentopen = 1 AND place.x_coord < "+str(up_lat)+" AND place.x_coord > "+str(bottom_lat)+" \
 			AND place.y_coord > "+str(left_long)+" AND place.y_coord < "+str(right_long))
 
@@ -154,11 +118,13 @@ class database_utils:
 
 		return cur.fetchall()
 
-	def get_all_open_type_in_area(self, place_type, left_long, up_lat, right_long, bottom_lat):
+	def get_all_open_type_in_area(self, place_type, left_long, up_lat, right_long, bottom_lat, lang):
 		cur = self.db.cursor()
 
-		cur.execute("SELECT place.x_coord, place.y_coord, place.likes, localtype.icon FROM \
-					place INNER JOIN localtype ON place.localtype=localtype.localtype WHERE \
+		selected_language = translate.get_db_language(lang)
+
+		cur.execute("SELECT place.x_coord, place.y_coord, place.likes, place.localeName, place."+selected_language+", \
+					localtype.icon FROM place INNER JOIN localtype ON place.localtype=localtype.localtype WHERE \
 					place.currentopen = 1 AND place.x_coord < "+str(up_lat)+" AND place.x_coord > "+str(bottom_lat)+" \
 					AND place.y_coord > "+str(left_long)+" AND place.y_coord < "+str(right_long)+" \
 					AND place.localtype = '"+place_type+"'")
@@ -173,14 +139,14 @@ class database_utils:
 		else:
 			liked = 0
 
-		#Add translate function here
+		descriptions = translate.get_description(review)
 
-		query = "INSERT into rating(x_coord, y_coord, username, liked, review) \
-			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + username + "', '" + str(liked) + "', '" + review + "');"
+		query = "INSERT into rating(x_coord, y_coord, username, liked, review, review_it, review_de, review_fr, review_en \
+			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + username + "', '" + str(liked) + "', '" + review + "'\
+			'"+descriptions["italian"]+"', '"+descriptions["german"]+"','"+descriptions["french"]+"','"+descriptions["english"]+"');"
 
 		cur.execute(query)
 		self.db.commit()
-
 
 		return cur.fetchall()
 
@@ -220,12 +186,14 @@ class database_utils:
 	def addPlace(self, lat, lng, placeName, address, town, state, country, email, phone, website, description, placeType):
 		cur = self.db.cursor()
 
-		#Add translate function here
+		descriptions = translate.get_description(description)
 
-		query = "INSERT INTO place (x_coord, y_coord, localeName, address, town, state, email, telephone, website, likes, dislikes, description, localtype) \
+		query = "INSERT INTO place (x_coord, y_coord, localeName, address, town, state, email, telephone, website, likes, \
+				dislikes, description, descript_de, descript_fr, descript_it, descript_en, localtype) \
 				values (" + str(lat) + ", " + str(lng) + ", '" + placeName + "', '"  + address + "', '" + town + "', '" \
 				+ state + "', '" + email + "', '" + phone + "', '" + website + "', " + str(0) + ", " + str(0) + ", '" \
-				+ description + "', '" + placeType + "');"
+				+ description + "', '"+descriptions["german"]+"', '"+descriptions["french"]+"','"+descriptions["italian"]+"',\
+				'"+descriptions["english"]+"','" + placeType + "');"
 		
 		cur.execute(query)
 		self.db.commit()

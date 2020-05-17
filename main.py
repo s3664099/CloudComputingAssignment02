@@ -137,7 +137,7 @@ class MainPage(BaseHandler):
 
         db = database.database_utils()
 
-        results = db.get_all_locations()
+        results = db.get_all_locations(language)
 
         #Now that we have performed the queries, the results are processed and stored
         #in the dictionary which is then passed back to the main function
