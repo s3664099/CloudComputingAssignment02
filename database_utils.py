@@ -166,7 +166,7 @@ class database_utils:
 			'"+descriptions["italian"]+"', '"+descriptions["german"]+"','"+descriptions["french"]+"','"+descriptions["english"]+"');"
 		"""
 
-		query = "INSERT into rating(x_coord, y_coord, username, liked, review, review_it, review_de, review_fr, review_en \
+		query = "INSERT into rating(x_coord, y_coord, username, liked, review \
 			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + username + "', '" + str(liked) + "', '" + review + "');"
 
 
@@ -223,7 +223,7 @@ class database_utils:
 		"""
 		
 		query = "INSERT INTO place (x_coord, y_coord, localeName, address, town, state, email, telephone, website, likes, \
-				dislikes, description, descript_de, descript_fr, descript_it, descript_en, localtype) \
+				dislikes, description, localtype) \
 				values (" + str(lat) + ", " + str(lng) + ", '" + placeName + "', '"  + address + "', '" + town + "', '" \
 				+ state + "', '" + email + "', '" + phone + "', '" + website + "', " + str(0) + ", " + str(0) + ", '" \
 				+ description + "','" + placeType + "');"
