@@ -31,18 +31,13 @@ import json
 from datetime import datetime 
 import trans_utils as translate 
 
-
-# Getting this to work was a mess...
-# https://stackoverflow.com/questions/40886217/error-importing-google-cloud-bigquery-api-module-in-python-app
-# https://stackoverflow.com/questions/43085047/how-to-import-bigquery-in-appengine-for-python
-
 from webapp2_extras import sessions
 from google.cloud import bigquery
 from requests_toolbelt.adapters import appengine
 appengine.monkeypatch()
 
 
-#This function sets up the jinj enviroment
+#This function sets up the jinja enviroment
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
@@ -67,24 +62,18 @@ class User(ndb.Model):
     password = ndb.StringProperty()
     salt = ndb.StringProperty()
 
-# https://stackoverflow.com/a/12737074
 # Maintains session data.
-
 class BaseHandler(webapp2.RequestHandler):
     def dispatch(self):
-        # Get a session store for this request.
         self.session_store = sessions.get_store(request=self.request)
 
         try:
-            # Dispatch the request.
             webapp2.RequestHandler.dispatch(self)
         finally:
-            # Save all sessions.
             self.session_store.save_sessions(self.response)
 
     @webapp2.cached_property
     def session(self):
-        # Returns a session using the default cookie key.
         return self.session_store.get_session()
 
 #This class is the main page handler. The code in this class processes what gets placed
@@ -334,7 +323,6 @@ class SignUpPage(webapp2.RequestHandler):
 
             if (user is None):
                 # Generating a crypto-safe random string to use as a salt.
-                # https://www.vitoshacademy.com/hashing-passwords-in-python/
                 salt = hashlib.sha256(os.urandom(20)).hexdigest().encode('ascii')
 
                 # Hashing password with the salt.
