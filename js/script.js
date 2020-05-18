@@ -19,9 +19,6 @@ function initMap() {
  	  			lat: position.coords.latitude,
       			lng: position.coords.longitude
        		};
-       		console.log(pos);
-       		console.log(position.coords.latitude)
-       		console.log(position.coords.longitude)
 
        	//if successful centres the map on the user and places a marker
 		var marker = new google.maps.Marker({position: pos, map: map});
