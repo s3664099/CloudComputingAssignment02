@@ -159,6 +159,14 @@ class database_utils:
 		else:
 			liked = 0
 
+		"""	
+		descriptions = translate.get_description(review)
+
+		query = "INSERT into rating(x_coord, y_coord, username, liked, review, review_it, review_de, review_fr, review_en \
+			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + username + "', '" + str(liked) + "', '" + review + "'\
+			'"+descriptions["italian"]+"', '"+descriptions["german"]+"','"+descriptions["french"]+"','"+descriptions["english"]+"');"
+		"""
+
 		query = "INSERT into rating(x_coord, y_coord, username, firstName, surname, liked, review) \
 			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + username + "', '" + firstName + "', '" \
 			+ surname + "', '" + str(liked) + "', '" + review + "');"
