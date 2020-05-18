@@ -108,9 +108,7 @@ function initMap() {
 			var marker = new google.maps.Marker({position: {lat: visited_locations[i].x_coord, lng: visited_locations[i].y_coord},
 			map: map
 			});
-			marker.setMap(map)
-
-			console.log(visited_locations[i].x_coord, lng: visited_locations[i].y_coord);
+			marker.setMap(map);
 		}
 	}
 

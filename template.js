@@ -24,6 +24,7 @@ var visited_locations = new Array()
     console.log("{{visit_selected}}");
 
     {%for visit in visited_places%}
+        console.log("{{visit.x_coord}}","{{visit.y_coord}}")
         x_coord = {{visit.x_coord}}
         y_coord = {{visit.y_coord}}
         visited_places = {"x_coord": x_coord,

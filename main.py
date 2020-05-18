@@ -135,8 +135,10 @@ class MainPage(BaseHandler):
 
         #Set up the values to be used in this function
         locations = []
+        visit_places = []
         location_details = {}
         template_values = {}
+        template_values['visited_places'] = None
         visited = False
         results = None
 
@@ -188,7 +190,8 @@ class MainPage(BaseHandler):
                     "x_coord": x_coord,
                     "y_coord": y_coord
                 }
-            template_values['visited_places'] = visited_places
+                visit_places.append(visited_places)
+            template_values['visited_places'] = visit_places
 
         #The results are stored in the template values for use on the webpage
 
