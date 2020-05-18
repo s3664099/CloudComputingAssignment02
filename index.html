@@ -11,21 +11,69 @@
 
   	<div id="topBar">
 	  
-	  {% if user is defined %}
-	  	<p id="signInStatus">Signed in as: {{user}}</p>
-		<form action="\signout"><input type="submit" value="Sign Out"></form>
-    <form action="\addplace"><input type="submit" value = "Add Place"></form>
-    <form action="\review"><input type="submit" value="Review Location"></form>  
-    <div id="lockInLocation"></div>
-    <p>{{lock}}</p>
+
+    <div>
+        <img id = "title-map" src = "https://storage.cloud.google.com/map-icons-cca02/Images/bcmtitle.png?authuser=2" alt="Beer & Coffee Maps"/>
+    </div>
+	  {% if user is defined%}
+        <span id="sign-in">
+            <form class = "Sign-In-Button" action="\signout"><input id = "lang_button" type="submit" value="{{main_page.signout}}"></form>
+            <form class = "Sign-In-Button" action="\addplace"><input id = "lang_button" type="submit" value = "{{main_page.addplace}}"></form>
+            <form class = "Sign-In-Button" action="\review"><input id = "lang_button" type="submit" value="{{main_page.reviewlocation}}"></form>  
+            <div id="lockInLocation"></div>
+        </span><p id="signInStatus">{{main_page.yessignin}}: {{user}}</p>
+        <p>{{lock}}</p>
 	  {% else %}
-		<form action="\signup"><input type="submit" value="Sign Up"></form>
-		<form action="\login"><input type="submit" value="Login"></form>
-		<p id="signInStatus">Not signed in.</p>
+
+        <span id="sign-in">
+            <form action="\signup"><input id = "lang_button" type="submit" value="{{main_page.signup}}"></form>
+    	    <form  action="\login"><input id = "lang_button" type="submit" value="{{main_page.login}}"></form>
+        </span>
+        <span id="signInStatus">{{main_page.nosignin}}.</span>
 	  {% endif %}
-    <img src = "https://storage.cloud.google.com/map-cc-assignment.appspot.com/bcmtitle.png" alt="Beer & Coffee Maps"/>
+
+      <span id = "selection_box">
+        <form action = "\show_locations" method='post'>
+            <select id = "lang_button" name = "location">
+            <option value = "beer">beer</option>
+            <option value = "coffee">coffee</option>
+            <option value = "beercoffee">beer & coffee</option>
+            <option value = "everything" selected="selected">everything</option>
+            <option value = "visited">places visited</option>
+        </select>
+        <input type="submit" id="lang_button" value = "Select">
+        </form>
+
+      </span>
+      <span id="lang">
+        <form action="\change_language" method='post'><select id="lang_button" name="language">
+    	{% if "en" in main_page.lang_set%}
+        	<option value = "en">English</option>
+        	<option value = "de">German</option>
+        	<option value = "fr">French</option>
+        	<option value = "it">Italian</option>
+    	{% elif "fr" in main_page.lang_set%}
+        	<option value = "fr"><img src = "https://storage.cloud.google.com/map-icons-cca02/Images/france-flag-icon-free-download.jpg" height = "3em" width = "auto"/>Française</option>
+        	<option value = "en"><img src = "https://storage.cloud.google.com/map-icons-cca02/Images/bb92a9985e8defd0bbc75820ab7829c0.jpg" height = "3em" width = "auto"/>Anglais</option>
+        	<option value = "de"><img src = "https://storage.cloud.google.com/map-icons-cca02/Images/germany-flag-icon-free-download.jpg" height = "3em" width = "auto"/>Allemand</option>
+        	<option value = "it"><img src = "https://storage.cloud.google.com/map-icons-cca02/Images/italy-flag-icon-free-download.jpg" height = "3em" width = "auto"/>Italien</option>
+    	{% elif "de" in main_page.lang_set%}
+        	<option value = "de"><img src = "https://storage.cloud.google.com/map-icons-cca02/Images/germany-flag-icon-free-download.jpg" height = "3em" width = "auto"/>Deutsch</option>
+        	<option value = "fr"><img src = "https://storage.cloud.google.com/map-icons-cca02/Images/france-flag-icon-free-download.jpg" height = "3em" width = "auto"/>Französisch</option>
+        	<option value = "en"><img src = "https://storage.cloud.google.com/map-icons-cca02/Images/bb92a9985e8defd0bbc75820ab7829c0.jpg" height = "3em" width = "auto"/>Englisch</option>
+        	<option value = "it"><img src = "https://storage.cloud.google.com/map-icons-cca02/Images/italy-flag-icon-free-download.jpg" height = "3em" width = "auto"/>Italienisch</option>  
+    	{%else%}
+        	<option value = "it"><img src = "https://storage.cloud.google.com/map-icons-cca02/Images/italy-flag-icon-free-download.jpg" height = "3em" width = "auto"/>Italiano</option>
+        	<option value = "de"><img src = "https://storage.cloud.google.com/map-icons-cca02/Images/germany-flag-icon-free-download.jpg" height = "3em" width = "auto"/>Tedesco</option>
+        	<option value = "fr"><img src = "https://storage.cloud.google.com/map-icons-cca02/Images/france-flag-icon-free-download.jpg" height = "3em" width = "auto"/>Francese</option>
+        	<option value = "en"><img src = "https://storage.cloud.google.com/map-icons-cca02/Images/bb92a9985e8defd0bbc75820ab7829c0.jpg" height = "3em" width = "auto"/>Inglese</option>
+    	{% endif %}
+        </select>
+   	 	<input type="submit" id="lang_button" value ={{main_page.lang}}>
+      </form>
+      </span>
+      <span id = "counter_box">Logins Today: <span id = "counter">{{loginCount}}</span></span>    
 	  <p id="locationStatus"></p>
-    <p>Logins Today: {{loginCount}}</p>
 	</div>
 
     <div id="map"></div>

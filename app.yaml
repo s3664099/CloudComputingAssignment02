@@ -2,6 +2,9 @@ runtime: python27
 api_version: 1
 threadsafe: yes
 
+automatic_scaling:
+  max_concurrent_requests: 12
+
 handlers:
 
 - url: /js

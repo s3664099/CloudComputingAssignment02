@@ -29,6 +29,8 @@ import math
 import requests
 import json
 from datetime import datetime 
+import trans_utils as translate 
+
 
 # Getting this to work was a mess...
 # https://stackoverflow.com/questions/40886217/error-importing-google-cloud-bigquery-api-module-in-python-app
@@ -50,6 +52,12 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 class search ():
     locale_type = "All"
     locale_place = "Sunbury"
+
+class language():
+    language = 'en'
+
+class show_locations():
+	selection = "everything"
 
 class User(ndb.Model):
     """Models a user."""
@@ -113,7 +121,7 @@ class MainPage(BaseHandler):
             pass
 
         if search.locale_type != "":
-            template_values = MainPage.perform_search(self)
+            template_values = MainPage.perform_search(self, language.language)
 
         if (self.session.get('lockError') == True):
             template_values['lock'] = "Please lock your location before reviewing or adding your location."
@@ -128,7 +136,6 @@ class MainPage(BaseHandler):
 
         template_values['loginCount'] = dailyLogins
 
-
         #This code sends the template values to the HTML file.
         #The first line sets up the template values, the second line renders the webpage.
         template = JINJA_ENVIRONMENT.get_template('index.html')
@@ -137,20 +144,35 @@ class MainPage(BaseHandler):
 #    def database_manip(self, db):
 
     #This function is where all of the database searches are performed
-    def perform_search(self):
+    def perform_search(self, language):
 
         #Set up the values to be used in this function
         locations = []
+        visit_places = []
         location_details = {}
         template_values = {}
+        template_values['visited_places'] = None
+        visited = False
+        results = None
 
         db = database.database_utils()
 
-        results = db.get_all_locations()
+        if show_locations.selection == "visited":
+            results = db.get_all_open_locations(language)
+            visited_results = db.get_all_visited()
+            visited = True
+        elif show_locations.selection == "beer":
+            results = db.get_all_open_type("place.localtype = 'Pub/Bar'", language)
+        elif show_locations.selection == "coffee":
+            results = db.get_all_open_type("place.localtype = 'Cafe'", language)
+        elif show_locations.selection == "beercoffee":
+            results = db.get_all_open_type("place.localtype = 'Cafe' OR place.localtype = 'Pub/Bar'", language)
+        else:
+            results = db.get_all_open_locations(language)
 
         #Now that we have performed the queries, the results are processed and stored
         #in the dictionary which is then passed back to the main function
-        for x_coord, y_coord, likes, localeName, description, icon in results:
+        for x_coord, y_coord, likes, localeName, description_fr, icon in results:
 
             rating = 0
 
@@ -171,13 +193,26 @@ class MainPage(BaseHandler):
                 "rating": rating,
                 "icon": icon,
                 "name": localeName,
-                "description": description
+                "description": description_fr
                 }
             locations.append(location_details) 
 
+        if visited == True:   
+            for x_coord, y_coord in visited_results:
+                visited_places = {
+                    "x_coord": x_coord,
+                    "y_coord": y_coord
+                }
+                visit_places.append(visited_places)
+            template_values['visited_places'] = visit_places
+
         #The results are stored in the template values for use on the webpage
 
+        main_page = translate.main_page(language)
+
         template_values['location_details'] = locations
+        template_values['visit_selected'] = visited
+        template_values['main_page'] = main_page
            
         return template_values
 
@@ -319,6 +354,13 @@ class SignUpPage(webapp2.RequestHandler):
                 self.response.write(template.render(firstNameError = firstNameError, surnameError = surnameError, 
                 emailError = emailError, passwordError = passwordError))
 
+class Language(BaseHandler):
+    def post(self):
+        language.language = self.request.get("language") 
+        #language.Language = 'de'
+        self.redirect('/')
+
+
 class SignOut(BaseHandler):
     def get(self):
         self.session['user'] = None
@@ -457,7 +499,6 @@ class AddPlace(BaseHandler):
             template = JINJA_ENVIRONMENT.get_template("addplace.html")
             self.response.write(template.render(message = "Location already exists."))
 
-
 def sendNewAccMail(senderAdd, recieverAdd, firstName, surname):
     mail.send_mail(sender = senderAdd, 
     to = firstName + " " + surname + " <" + recieverAdd + ">",
@@ -477,6 +518,22 @@ class LockLocation(BaseHandler):
 
         self.redirect('/')
 
+class Change_locations(BaseHandler):
+	def post(self):
+
+		option = self.request.get("location")
+		if option == "beer":
+			show_locations.selection = "beer"
+		elif option == "coffee":
+			show_locations.selection = "coffee"
+		elif option == "beercoffee":
+			show_locations.selection = "beercoffee"
+		elif option == "visited":
+			show_locations.selection = "visited"
+		else:
+			show_locations.selection = "everything"
+
+		self.redirect('/')
 
 
 # Config for Session Storage.
@@ -494,7 +551,9 @@ app = webapp2.WSGIApplication([
     ('/signout', SignOut),
     ('/review', Review),
     ('/addplace', AddPlace),
-    ('/locklocation', LockLocation)
+    ('/locklocation', LockLocation),
+    ('/change_language', Language),
+    ('/show_locations', Change_locations)
 ], debug=True, config=config)
 
 # [END gae_python_mysql_app]
