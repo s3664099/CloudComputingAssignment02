@@ -59,6 +59,10 @@ class language():
 class show_locations():
 	selection = "everything"
 
+class place():
+    lng = 0
+    lat = 0
+
 class User(ndb.Model):
     """Models a user."""
     firstName = ndb.StringProperty()
@@ -536,6 +540,35 @@ class Change_locations(BaseHandler):
 
 		self.redirect('/')
 
+class View_Place(BaseHandler):
+    def post(self):
+
+        co_ords = self.request.get("co-ords")
+        co_ords = co_ords.split(",")
+        place.lng = co_ords[0]
+        place.lat = co_ords[1]
+
+    def get(self):
+
+        db = database.database_utils()
+
+        location_data = db.getReviews(place.lng, place.lat)
+
+        for localeName, address, email, telephone, website, description, picture in location_data:
+            location = {
+                "name": localeName,
+                "address": address,
+                "email": email,
+                "telephone": telephone,
+                "website": website,
+                "description": description,
+                "picture" : picture
+            }
+
+        template_values = location
+
+        template = JINJA_ENVIRONMENT.get_template('view_location.html')
+        self.response.write(template.render(template_values))
 
 # Config for Session Storage.
 config = {}
@@ -554,7 +587,8 @@ app = webapp2.WSGIApplication([
     ('/addplace', AddPlace),
     ('/locklocation', LockLocation),
     ('/change_language', Language),
-    ('/show_locations', Change_locations)
+    ('/show_locations', Change_locations),
+    ('/View_Place', View_Place)
 ], debug=True, config=config)
 
 # [END gae_python_mysql_app]

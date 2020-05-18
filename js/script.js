@@ -91,10 +91,13 @@ function initMap() {
 	    })
 	    marker.data = locations[i];
 	    
+	    //https://stackoverflow.com/questions/37511911/google-maps-api-add-marker-with-form-but-getelementbyid-only-after-second-click
+
 	    marker.addListener('mouseover', function() {
-	    	infowindow.setContent("<div><h3>"+this.data.name+"</h3></div><p>"+this.data.descript+"</p>");
+	    	infowindow.setContent("<div><h3>"+this.data.name+"</h3></div><p>"+this.data.descript+"</p><div>"+v_buttons[i]+"</div>");
 	    	infowindow.open(map, this);
 	    })
+	    console.log(v_buttons[i]);
 
 	    marker.addListener('mouseout', function() {
 	    	infowindow.close();
