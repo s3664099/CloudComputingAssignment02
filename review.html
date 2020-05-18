@@ -1,14 +1,38 @@
 <html>
     <head>
     <script type="text/javascript" src="js/reviewForm.js"></script>
+    <a href="/">Return to Home</a>
     </head>
     <body>
         <div>
-            <h1>Review</h1>
+            <h1>Write Review</h1>
             <div>{{message}}</div>
             <div id="placeForm"></div>
             <script>makeReviewForm()</script>
         </div>
+        <div>
+            <h2>Reviews</h2>
+            {% if reviews is defined and reviews|length > 0 %}
+                <div>
+                    {% for review in reviews %}
+                        <div>
+                        <p>Author: {{review[3]}} {{review[4]}}</p>
+                        {%if review[5] == 1%}
+                            <p>Liked: Yes</p>
+                        {% else %}
+                            <p>Liked: No</p>
+                        {% endif %}
+                        <p>Review: {{review[6]}}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div>
+                    <p> No reviews. </p>
+                </div>
+            {% endif %}
+        </div
+        
     </body>
 </html>
 

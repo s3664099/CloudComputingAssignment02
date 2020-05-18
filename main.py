@@ -28,7 +28,9 @@ import logging
 import math
 import requests
 import json
+from datetime import datetime 
 import trans_utils as translate 
+
 
 # Getting this to work was a mess...
 # https://stackoverflow.com/questions/40886217/error-importing-google-cloud-bigquery-api-module-in-python-app
@@ -99,18 +101,24 @@ class MainPage(BaseHandler):
         template_values = {}
 
         client = bigquery.Client()
-
-        query = """
-            SELECT count(*) FROM `map-cc-assignment.LoginData.appengine_googleapis_com_request_log_20200512` 
-            where DATE(timestamp) = CURRENT_DATE LIMIT 1000;
-        """
-        query_job = client.query(query)
-        results = query_job.result()
-
+        tablecode = datetime.now().strftime('%Y%m%d')
         dailyLogins = 0
 
-        for row in results:
-            dailyLogins = row.f0_
+        try:
+            query = """
+            SELECT count(*) FROM `map-cc-assignment.LoginData.appengine_googleapis_com_request_log_""" + tablecode + """` 
+            where DATE(timestamp) = CURRENT_DATE LIMIT 1000;
+            """
+            query_job = client.query(query)
+            results = query_job.result()
+
+            dailyLogins = 0
+
+            for row in results:
+                dailyLogins = row.f0_
+
+        except:
+            pass
 
         if search.locale_type != "":
             template_values = MainPage.perform_search(self, language.language)
@@ -120,7 +128,12 @@ class MainPage(BaseHandler):
             self.session['lockError'] = False
 
         userKey = self.session.get('user')
-        template_values['user'] = userKey
+
+        if (userKey != None):
+            user_key = ndb.Key("User", userKey)
+            user = user_key.get()
+            template_values['user'] = user.firstName
+
         template_values['loginCount'] = dailyLogins
 
         #This code sends the template values to the HTML file.
@@ -362,8 +375,10 @@ class Review(BaseHandler):
             self.session['lockError'] = True
             self.redirect('/')
         else:
+            db = database.database_utils()
             template = JINJA_ENVIRONMENT.get_template("review.html")
-            self.response.write(template.render())
+            reviews = db.getReviews(self.session.get('lat'), self.session.get('lng'))
+            self.response.write(template.render(reviews = reviews))
         
 
     def post(self):
@@ -393,13 +408,24 @@ class Review(BaseHandler):
                 trueLiked = 0
 
             review = self.request.get('review')
+            userKey = self.session.get('user')
+            user_key = ndb.Key("User", userKey)
+            user = user_key.get()
 
-            db.addReview(lat, lng, userKey, liked, review)
-            template = JINJA_ENVIRONMENT.get_template("review.html")
-            self.response.write(template.render(message = "Review successfully submitted!"))
+            try:
+                db.addReview(lat, lng, userKey, user.firstName, user.surname, liked, review)
+                template = JINJA_ENVIRONMENT.get_template("review.html")
+                reviews = db.getReviews(self.session.get('lat'), self.session.get('lng'))
+                self.response.write(template.render(message = "Review successfully submitted!", reviews = reviews))
+            except:
+                template = JINJA_ENVIRONMENT.get_template("review.html")
+                reviews = db.getReviews(self.session.get('lat'), self.session.get('lng'))
+                self.response.write(template.render(message = "You've already submitted a review for this location!", reviews = reviews))
         else:
             template = JINJA_ENVIRONMENT.get_template("review.html")
-            self.response.write(template.render(message = "No place was detected at your location. Please add your place before reviewing."))
+            reviews = db.getReviews(self.session.get('lat'), self.session.get('lng'))
+            self.response.write(template.render(message = "No place was detected at your location. Please add your place before reviewing.",
+            reviews = reviews))
 
 class AddPlace(BaseHandler):
     def get(self):
@@ -407,11 +433,16 @@ class AddPlace(BaseHandler):
             self.session['lockError'] = True
             self.redirect('/')
         else:
-            template = JINJA_ENVIRONMENT.get_template("addplace.html")
-            self.response.write(template.render())
+            db = database.database_utils()
+            if (db.checkIfPlace(self.session.get('lat'), self.session.get('lng'))):
+                place = db.getPlaceInfo(self.session.get('lat'), self.session.get('lng'))
+                template = JINJA_ENVIRONMENT.get_template("addplace.html")
+                self.response.write(template.render(place = place)) 
+            else:
+                template = JINJA_ENVIRONMENT.get_template("addplace.html")
+                self.response.write(template.render())
 
     def post(self):
-        # self.response.write(self.request.POST)
         lat = self.session.get('lat')
         lng = self.session.get('lng')
         placeName = self.request.get('placeName')
