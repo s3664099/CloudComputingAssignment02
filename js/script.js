@@ -34,6 +34,7 @@ function initMap() {
 		var lockLocation = document.createElement("form");
 		lockLocation.setAttribute('method', "POST");
 		lockLocation.setAttribute('action', '/locklocation');
+		lockLocation.setAttribute('class', 'Sign-In-Button')
 
 		var reviewLat = document.createElement("input");
 		reviewLat.hidden = true;
@@ -48,14 +49,13 @@ function initMap() {
 		var submitButton = document.createElement("input");
 		submitButton.type = "submit";
 		submitButton.value = "Lock Location";
+		submitButton.id = "lang_button";
 
 		lockLocation.appendChild(reviewLat);
 		lockLocation.appendChild(reviewLng);
 		lockLocation.appendChild(submitButton);
 
-		if (document.getElementById("lockInLocation") != null) {
-			document.getElementById("lockInLocation").appendChild(lockLocation);
-		}
+		document.getElementById("sign-in").appendChild(lockLocation);
 		
 
 	} else {

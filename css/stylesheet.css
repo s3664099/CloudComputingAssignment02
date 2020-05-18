@@ -74,9 +74,9 @@ select#lang_button option[value="fr"] { background-image:url(https://storage.clo
 	border-left-width: 3px;
 	border-color: #006600;
 	background-color: black;
-	color: #fcec00
+	color: #fcec00;
 	border-top-width: 0;
-	border-bottom-width: 0
+	border-bottom-width: 0;
 }
 
 #signInStatus {
