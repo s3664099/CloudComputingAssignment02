@@ -1,8 +1,10 @@
 <html>
     <head>
     <script type="text/javascript" src="js/dynamicForm.js"></script>
+    <a href="/">Return to Home</a>
     </head>
     <body>
+        {% if place is undefined %}
         <div>
             <h1>Add Place Information</h1>
             <label>{{message}}</label><br>
@@ -17,6 +19,18 @@
 
             <div id="dynamicForm"></div>
         </div>
+        {% else %}
+        <div>
+            <p>Place already exists! Here are it's details. </p><br>
+            {% for row in place %}
+                <p>Latitude: {{row[0]}}</p>
+                <p>Longitude: {{row[1]}}</p>
+                <p>Name: {{row[2]}}</p>
+                <p>Address: {{row[3]}}</p>
+                <p>Type: {{row[16]}}</p>
+            {% endfor %}
+        </diV>
+        {% endif %}
     </body>
 </html>
 
