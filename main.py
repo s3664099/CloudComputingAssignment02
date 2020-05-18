@@ -213,6 +213,7 @@ class MainPage(BaseHandler):
         template_values['location_details'] = locations
         template_values['visit_selected'] = visited
         template_values['main_page'] = main_page
+        template_values['selection'] = show_locations.selection
            
         return template_values
 

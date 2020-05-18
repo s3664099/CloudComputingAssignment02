@@ -35,11 +35,31 @@
       <span id = "selection_box">
         <form action = "\show_locations" method='post'>
             <select id = "lang_button" name = "location">
+            {% if "beer" in selection%}
+            <option value = "beer" selected="selected">beer</option>
+            {$ else %}
             <option value = "beer">beer</option>
+            {% endif %}
+            {% if "coffee" in selection%}
+            <option value = "coffee" selected="selected">coffee</option>
+            {% else %}
             <option value = "coffee">coffee</option>
+            {% endif %}
+            {% if "beercoffee" in selection%}
+            <option value = "beercoffee" selected="selected">beer & coffee</option>
+            {% else %}
             <option value = "beercoffee">beer & coffee</option>
+            {% endif %}
+            {% if "everything" in selection%}
             <option value = "everything" selected="selected">everything</option>
+            {% else %}
+            <option value = "everything">everything</option>
+            {% endif %}
+            {% if "visited" in selection%}
+            <option value = "visited" selected="selected">places visited</option>
+            {% else %}
             <option value = "visited">places visited</option>
+            {% endif %}
         </select>
         <input type="submit" id="lang_button" value = "Select">
         </form>
