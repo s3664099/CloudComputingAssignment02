@@ -543,17 +543,18 @@ class Change_locations(BaseHandler):
 class View_Place(BaseHandler):
     def post(self):
 
-        co_ords = self.request.get("co-ords")
-        co_ords = co_ords.split(",")
-        place.lng = co_ords[0]
-        place.lat = co_ords[1]
+        place.lng = self.request.get("longitude")
+        place.lat = self.request.get("latitude")
 
     def get(self):
 
         db = database.database_utils()
 
         location_data = db.getReviews(place.lng, place.lat)
+        location = {}
+        template_values = {}
 
+        """
         for localeName, address, email, telephone, website, description, picture in location_data:
             location = {
                 "name": localeName,
@@ -565,9 +566,12 @@ class View_Place(BaseHandler):
                 "picture" : picture
             }
 
-        template_values = location
+        template_values['location'] = location
+        """
+        template = JINJA_ENVIRONMENT.get_template('view_place.html')
 
-        template = JINJA_ENVIRONMENT.get_template('view_location.html')
+        self.response.write(template.render(message = "Hello"))
+
         self.response.write(template.render(template_values))
 
 # Config for Session Storage.
