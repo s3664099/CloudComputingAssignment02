@@ -282,7 +282,7 @@ class SignUpPage(webapp2.RequestHandler):
 
     def get(self):
 
-        template = JINJA_ENVIRONMENT.get_template('signup.html')
+        template = JINJA_ENVIRONMENT.get_template('sign_up.html')
         self.response.write(template.render())
 
     def post(self):
@@ -362,7 +362,7 @@ class SignUpPage(webapp2.RequestHandler):
 class Language(BaseHandler):
     def post(self):
         language.language = self.request.get("language") 
-        #language.Language = 'de'
+
         self.redirect('/')
 
 
@@ -546,15 +546,16 @@ class View_Place(BaseHandler):
         place.lng = self.request.get("longitude")
         place.lat = self.request.get("latitude")
 
+        self.redirect('/View_Place')
+
     def get(self):
 
         db = database.database_utils()
 
-        location_data = db.getReviews(place.lng, place.lat)
+        location_data = db.get_Place_Info(place.lat, place.lng)
         location = {}
         template_values = {}
 
-        """
         for localeName, address, email, telephone, website, description, picture in location_data:
             location = {
                 "name": localeName,
@@ -564,14 +565,13 @@ class View_Place(BaseHandler):
                 "website": website,
                 "description": description,
                 "picture" : picture
-            }
+        }
 
         template_values['location'] = location
-        """
-        template = JINJA_ENVIRONMENT.get_template('view_place.html')
+        template_values['longitude'] = place.lng
+        template_values['latitude'] = place.lat
 
-        self.response.write(template.render(message = "Hello"))
-
+        template = JINJA_ENVIRONMENT.get_template('view_location.html')
         self.response.write(template.render(template_values))
 
 # Config for Session Storage.

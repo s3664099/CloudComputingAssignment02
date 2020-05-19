@@ -11,16 +11,22 @@
   	<div id="topBar">
   		<img id = "title-map" src = "https://storage.cloud.google.com/map-icons-cca02/Images/bcmtitle.png?authuser=2" alt="Beer & Coffee Maps"/>
   	</div>
-    <!--
+
   	<div id="topBar" class="main_screen">
-  		<h1>{{location.name}}</h1>
-  		<b>Address: </b>{{location.address}}</br>
-  		<b>Phone: </b>{{location.telephone}}</br>
-  		<b>Website: </b><a href="http://{{location.website}}">{{location.website}}</a></br>
-  		<b>Description</b></br>
-  		{{location.description}}
+
+      <div id = "infoBox">
+  		  <h1>{{location.name}}</h1>
+  		  <b>Address: </b>{{location.address}}</br>
+  		  <b>Phone: </b>{{location.telephone}}</br>
+  		  <b>Website: </b><a href="https://{{location.website}}" target = "_blank">{{location.website}}</a></br>
+  		  <b>Description</b></br>
+   		  {{location.description}}
+
+        Longitude: {{longitude}}
+        Latitude: {{latitude}}
+      </div>
   	</div>
   </body>
   </html>
-  -->
+
   {% endautoescape %}

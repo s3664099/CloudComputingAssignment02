@@ -329,13 +329,12 @@ def testQuery(conn):
 	"""
 
 	try:
-		cur.execute("SELECT localename, x_coord, y_coord, description FROM place WHERE description <> '' or description <> NULL")
+		cur.execute("SELECT localename, x_coord, y_coord FROM place WHERE localename = 'Melbourne Cricket Ground'")
 	except pymysql.Error as e:
 		print("Error: ",e)
 
-	for localename, x_coord,y_coord, description in cur.fetchall():
-		print(localename, x_coord, y_coord)
-		print(description)
+	for localename, x_coord,y_coord in cur.fetchall():
+		print(localename, x_coord,y_coord)
 
 
 def translate(conn):
