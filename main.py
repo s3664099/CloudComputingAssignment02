@@ -282,7 +282,7 @@ class SignUpPage(webapp2.RequestHandler):
 
     def get(self):
 
-        template = JINJA_ENVIRONMENT.get_template('sign_up.html')
+        template = JINJA_ENVIRONMENT.get_template('signup.html')
         self.response.write(template.render())
 
     def post(self):
