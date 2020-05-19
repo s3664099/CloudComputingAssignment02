@@ -1,6 +1,7 @@
 var locations = new Array()
 var visited = false
 var visited_locations = new Array()
+var v_buttons = new Array()
 
 {% for location in location_details %}
 
@@ -21,10 +22,7 @@ var visited_locations = new Array()
 
 {% if visit_selected == true %}
 
-    console.log("{{visit_selected}}");
-
     {%for visit in visited_places%}
-        console.log("{{visit.x_coord}}","{{visit.y_coord}}")
         x_coord = {{visit.x_coord}}
         y_coord = {{visit.y_coord}}
         visited_places = {"x_coord": x_coord,

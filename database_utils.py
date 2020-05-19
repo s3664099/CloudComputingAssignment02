@@ -295,7 +295,13 @@ class database_utils:
 		return results
 
 
-
+	def get_Place_Info(self, lat, lng):
+		cur = self.db.cursor()
+		query = "SELECT localeName, address, email, telephone, website, description, picture \
+				FROM place WHERE x_coord = '" + str(lat) + "' AND y_coord = '" + str(lng) + "';"
+		cur.execute(query)
+		results = cur.fetchall()
+		return results
 
 
 

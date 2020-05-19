@@ -54,6 +54,10 @@ class language():
 class show_locations():
 	selection = "everything"
 
+class place():
+    lng = 0
+    lat = 0
+
 class User(ndb.Model):
     """Models a user."""
     firstName = ndb.StringProperty()
@@ -202,6 +206,7 @@ class MainPage(BaseHandler):
         template_values['location_details'] = locations
         template_values['visit_selected'] = visited
         template_values['main_page'] = main_page
+        template_values['selection'] = show_locations.selection
            
         return template_values
 
@@ -345,7 +350,7 @@ class SignUpPage(webapp2.RequestHandler):
 class Language(BaseHandler):
     def post(self):
         language.language = self.request.get("language") 
-        #language.Language = 'de'
+
         self.redirect('/')
 
 
@@ -523,6 +528,39 @@ class Change_locations(BaseHandler):
 
 		self.redirect('/')
 
+class View_Place(BaseHandler):
+    def post(self):
+
+        place.lng = self.request.get("longitude")
+        place.lat = self.request.get("latitude")
+
+        self.redirect('/View_Place')
+
+    def get(self):
+
+        db = database.database_utils()
+
+        location_data = db.get_Place_Info(place.lat, place.lng)
+        location = {}
+        template_values = {}
+
+        for localeName, address, email, telephone, website, description, picture in location_data:
+            location = {
+                "name": localeName,
+                "address": address,
+                "email": email,
+                "telephone": telephone,
+                "website": website,
+                "description": description,
+                "picture" : picture
+        }
+
+        template_values['location'] = location
+        template_values['longitude'] = place.lng
+        template_values['latitude'] = place.lat
+
+        template = JINJA_ENVIRONMENT.get_template('view_location.html')
+        self.response.write(template.render(template_values))
 
 # Config for Session Storage.
 config = {}
@@ -541,7 +579,8 @@ app = webapp2.WSGIApplication([
     ('/addplace', AddPlace),
     ('/locklocation', LockLocation),
     ('/change_language', Language),
-    ('/show_locations', Change_locations)
+    ('/show_locations', Change_locations),
+    ('/View_Place', View_Place)
 ], debug=True, config=config)
 
 # [END gae_python_mysql_app]

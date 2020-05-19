@@ -65,7 +65,7 @@ select#lang_button option[value="fr"] { background-image:url(https://storage.clo
 	padding-left: 10px;
 	padding-right: 10px;
 	font-size: 12px;
-	margin-right: 3% 
+	margin-right: 2% 
 }
 
 #counter {
@@ -88,6 +88,10 @@ select#lang_button option[value="fr"] { background-image:url(https://storage.clo
     height: 100%;
     border-style: inset;
     border-color: black;
+}
+
+.main_screen {
+	bottom: 10px;
 }
 
 /* Optional: Makes the sample page fill the window. */
