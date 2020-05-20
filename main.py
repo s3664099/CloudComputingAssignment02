@@ -580,7 +580,8 @@ app = webapp2.WSGIApplication([
     ('/locklocation', LockLocation),
     ('/change_language', Language),
     ('/show_locations', Change_locations),
-    ('/View_Place', View_Place)
+    ('/View_Place', View_Place),
+    ('/back', MainPage)
 ], debug=True, config=config)
 
 # [END gae_python_mysql_app]
