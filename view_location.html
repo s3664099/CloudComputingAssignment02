@@ -25,6 +25,14 @@
         Longitude: {{longitude}}
         Latitude: {{latitude}}
       </div>
+
+      <div>
+
+      <form action='/review' method="GET">
+      <input hidden=true name="latitude" value="{{latitude}}">
+      <input hidden=true name="longitude" value="{{longitude}}">
+      <input type=submit value="Review Place">
+      </form>
   	</div>
   </body>
   </html>

@@ -364,26 +364,24 @@ class SignOut(BaseHandler):
 class Review(BaseHandler):
 
     def get(self):
-        if (self.session.get('lat') is None):
-            self.session['lockError'] = True
-            self.redirect('/')
-        else:
-            db = database.database_utils()
-            template = JINJA_ENVIRONMENT.get_template("review.html")
-            reviews = db.getReviews(self.session.get('lat'), self.session.get('lng'))
-            self.response.write(template.render(reviews = reviews))
+        latitude = self.request.get('latitude')
+        longitude = self.request.get('longitude')
+        db = database.database_utils()
+        template = JINJA_ENVIRONMENT.get_template("review.html")
+        reviews = db.getReviews(latitude, longitude)
+        self.response.write(template.render(reviews = reviews, latitude = latitude, longitude = longitude))
         
 
     def post(self):
-        placeType = self.request.get('type')
+        # placeType = self.request.get('type')
         userKey = self.session.get('user')
 
         db = database.database_utils()
         
         # Submit just the review part to the database.
 
-        lat = self.session.get('lat')
-        lng = self.session.get('lng')
+        lat = self.request.get('latitude')
+        lng = self.request.get('longitude')
 
         if (lat == None or lng == None):
             template = JINJA_ENVIRONMENT.get_template("review.html")
@@ -408,17 +406,17 @@ class Review(BaseHandler):
             try:
                 db.addReview(lat, lng, userKey, user.firstName, user.surname, liked, review)
                 template = JINJA_ENVIRONMENT.get_template("review.html")
-                reviews = db.getReviews(self.session.get('lat'), self.session.get('lng'))
-                self.response.write(template.render(message = "Review successfully submitted!", reviews = reviews))
+                reviews = db.getReviews(lat, lng)
+                self.response.write(template.render(message = "Review successfully submitted!", reviews = reviews, latitude = lat, longitude = lng))
             except:
                 template = JINJA_ENVIRONMENT.get_template("review.html")
-                reviews = db.getReviews(self.session.get('lat'), self.session.get('lng'))
-                self.response.write(template.render(message = "You've already submitted a review for this location!", reviews = reviews))
+                reviews = db.getReviews(lat, lng)
+                self.response.write(template.render(message = "You've already submitted a review for this location!", reviews = reviews, latitude = lat, longitude = lng))
         else:
             template = JINJA_ENVIRONMENT.get_template("review.html")
-            reviews = db.getReviews(self.session.get('lat'), self.session.get('lng'))
+            reviews = db.getReviews(lat, lng)
             self.response.write(template.render(message = "No place was detected at your location. Please add your place before reviewing.",
-            reviews = reviews))
+            reviews = reviews, latitude = lat, longitude = lng))
 
 class AddPlace(BaseHandler):
     def get(self):

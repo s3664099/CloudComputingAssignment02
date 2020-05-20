@@ -225,7 +225,7 @@ class database_utils:
 		descriptions = translate.get_description(description)
 
 		query = "INSERT INTO place (x_coord, y_coord, localeName, address, town, state, email, telephone, website, likes, \
-				dislikes, description, descript_de, descript_fr, descript_it, descript_en, localtype) \
+				dislikes, currentopen, description, descript_de, descript_fr, descript_it, descript_en, localtype) \
 				values (" + str(lat) + ", " + str(lng) + ", '" + placeName + "', '"  + address + "', '" + town + "', '" \
 				+ state + "', '" + email + "', '" + phone + "', '" + website + "', " + str(0) + ", " + str(0) + ", '" \
 				+ description + "', '"+descriptions["german"]+"', '"+descriptions["french"]+"','"+descriptions["italian"]+"',\
@@ -233,10 +233,10 @@ class database_utils:
 		"""
 		
 		query = "INSERT INTO place (x_coord, y_coord, localeName, address, town, state, email, telephone, website, likes, \
-				dislikes, description, localtype) \
+				dislikes, currentopen, description, localtype) \
 				values (" + str(lat) + ", " + str(lng) + ", '" + placeName + "', '"  + address + "', '" + town + "', '" \
-				+ state + "', '" + email + "', '" + phone + "', '" + website + "', " + str(0) + ", " + str(0) + ", '" \
-				+ description + "','" + placeType + "');"
+				+ state + "', '" + email + "', '" + phone + "', '" + website + "', " + str(0) + ", " + str(0) + ", " \
+				+ str(1) + ", '" + description + "','" + placeType + "');"
 
 		cur.execute(query)
 		self.db.commit()
