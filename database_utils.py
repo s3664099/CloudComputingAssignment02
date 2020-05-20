@@ -294,6 +294,13 @@ class database_utils:
 		results = cur.fetchall()
 		return results
 
+	def get_Reviews(self, lat, lng):
+		cur = self.db.cursor()
+		query = "SELECT username, review FROM rating WHERE x_coord = '" + str(lat) + "' AND y_coord = '" + str(lng) + "';"
+		cur.execute(query)
+		results = cur.fetchall()
+		return results
+
 
 	def get_Place_Info(self, lat, lng):
 		cur = self.db.cursor()

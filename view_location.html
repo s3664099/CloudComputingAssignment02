@@ -6,36 +6,56 @@
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <link type="text/css" rel="stylesheet" href="css/stylesheet.css">
+    <link type="text/css" rel="stylesheet" href="css/viewlocationsheet.css">    
   </head>
   <body>
   	<div id="topBar">
-  		<img id = "title-map" src = "https://storage.googleapis.com/map-icons-cca02/Images/bcmtitle.png?authuser=2" alt="Beer & Coffee Maps"/>
-      <form action = '/back'>
+    <div>
+    	<img id = "title-map" src = "https://storage.googleapis.com/map-icons-cca02/Images/bcmtitle.png?authuser=2" alt="Beer & Coffee Maps"/>
+    </div>
+    <div>
+      <form action='/review' method="GET" id = "selection_box">
+        <input hidden=true name="latitude" value="{{latitude}}">
+        <input hidden=true name="longitude" value="{{longitude}}">
+        <input type=submit value="Review Place">
+      </form>      
+      <form action = '/back' id="lang">
         <input type='submit' value = 'Back to Maps'>
       </form>
+    </div>
   	</div>
 
   	<div id="topBar" class="main_screen">
 
       <div id = "infoBox">
   		  <h1>{{location.name}}</h1>
-  		  <b>Address: </b>{{location.address}}</br>
-  		  <b>Phone: </b>{{location.telephone}}</br>
-  		  <b>Website: </b><a href="https://{{location.website}}" target = "_blank">{{location.website}}</a></br>
-  		  <b>Description</b></br>
-   		  {{location.description}}
 
-        Longitude: {{longitude}}
-        Latitude: {{latitude}}
+        <img src = "https://storage.googleapis.com/maps-place-images/Images/{{location.picture}}" height = "500"  width = "600" alt = "{{location.name}} picture">
+
+        <div d = "placeDetails"> 
+    		  <b>Address: </b>{{location.address}}</br>
+        </div>
+        {% if location.telephone != "Nil" %}
+          <div d = "placeDetails"> 
+     		    <b>Phone: </b>{{location.telephone}}</br>
+          </div>
+        {% endif %}
+        {% if location.telephone != "Nil" %}       
+          <div d = "placeDetails"> 
+    	   	  <b id = "placeDetails">Website: </b><a href="https://{{location.website}}" target = "_blank">{{location.website}}</a></br>
+          </div>
+        {% endif %}
+
+        <h2 id = "descriptionTitle">Description</h2></br>
+   		  {{location.description}}
       </div>
 
-      <div>
+      <h2 id = "descriptionTitle">User Reviews</h2></br>
+      {% for review in reviews%}
+        <div><h3>{{review.username}}</h3></div>
+        <p>{{review.review}}</p>
 
-      <form action='/review' method="GET">
-      <input hidden=true name="latitude" value="{{latitude}}">
-      <input hidden=true name="longitude" value="{{longitude}}">
-      <input type=submit value="Review Place">
-      </form>
+      {% endfor %}
   	</div>
   </body>
   </html>

@@ -472,7 +472,7 @@ class AddPlace(BaseHandler):
                     placeSpecific['teaPot'] = self.request.get('teaPot')
                     placeSpecific['sugar'] = self.request.get('sugar')
                     placeSpecific['keepCupDiscount'] = self.request.get('keepCupDiscount')
-                    db.addCafeInfo(placeSpecific, lat, lng)
+                    db.addCafeInfo(placeSpeplace.lat, place.lngcific, lat, lng)
                 else:
                     if (placeType == "Museum"):
                         placeSpecific['entryFee'] = self.request.get('entryFee')
@@ -541,6 +541,7 @@ class View_Place(BaseHandler):
         location_data = db.get_Place_Info(place.lat, place.lng)
         location = {}
         template_values = {}
+        reviews = []
 
         for localeName, address, email, telephone, website, description, picture in location_data:
             location = {
@@ -553,9 +554,20 @@ class View_Place(BaseHandler):
                 "picture" : picture
         }
 
+        reviews_t = db.get_Reviews(place.lat, place.lng)
+
+        for username, review in reviews_t:
+            review_details = {
+                "username": username,
+                "review": review
+            }
+            reviews.append(review_details)
+
+
         template_values['location'] = location
         template_values['longitude'] = place.lng
         template_values['latitude'] = place.lat
+        template_values['reviews'] = reviews
 
         template = JINJA_ENVIRONMENT.get_template('view_location.html')
         self.response.write(template.render(template_values))

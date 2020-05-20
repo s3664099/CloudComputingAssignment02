@@ -102,7 +102,7 @@ def createTables(conn):
 	try:
 		cur.execute("CREATE TABLE rating(x_coord DECIMAL (9,6), y_coord DECIMAL (9,6), username VARCHAR(30),\
 				 	liked BOOLEAN, review TEXT(5000), review_it TEXT(5000), review_de TEXT(5000), review_fr TEXT(5000), \
-				 	review_en TEXT(5000), translated BOOLEAN, PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (x_coord, y_coord)\
+				 	review_en TEXT(5000), translated BOOLEAN, PRIMARY KEY (x_coord, y_coord, username), FOREIGN KEY (x_coord, y_coord)\
 				 	REFERENCES place(x_coord, y_coord))")
 	except pymysql.Error as e:
 		print("Error rating: ",e)
@@ -299,6 +299,12 @@ def testQuery(conn):
 
 	"""
 	try:
+		cur.execute("UPDATE place SET picture = 'MCG.JPG' WHERE x_coord = -37.819963 AND y_coord = 144.983313")
+	except pymysql.Error as e:
+		print("Error: ",e)
+
+
+	try:
 		cur.execute("SHOW TABLES")
 
 		for table in cur.fetchall():
@@ -326,7 +332,11 @@ def testQuery(conn):
 
 	#cur.execute("SELECT localename, x_coord, y_coord FROM place WHERE localtype='Airport'")
 	#print(cur.fetchall())
-	"""
+			cur.execute("CREATE TABLE rating(x_coord DECIMAL (9,6), y_coord DECIMAL (9,6), username VARCHAR(30),\
+				 	liked BOOLEAN, review TEXT(5000), review_it TEXT(5000), review_de TEXT(5000), review_fr TEXT(5000), \
+				 	review_en TEXT(5000), translated BOOLEAN, PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (x_coord, y_coord)\
+				 	REFERENCES place(x_coord, y_coord))")
+
 
 	try:
 		cur.execute("SELECT localename, x_coord, y_coord FROM place WHERE localename = 'Melbourne Cricket Ground'")
@@ -335,7 +345,7 @@ def testQuery(conn):
 
 	for localename, x_coord,y_coord in cur.fetchall():
 		print(localename, x_coord,y_coord)
-
+	"""
 
 def translate(conn):
 	cur = conn.cursor()
@@ -384,3 +394,39 @@ testQuery(myConnection)
 myConnection.close()
 
 
+
+
+"""
+	try:
+		cur.execute("INSERT INTO rating(x_coord, y_coord, username, liked, review, translated) VALUES \
+			(-37.819963, 144.983313, 'DaveTheDork',1,'There is so much to say about the MCG that it is hard to know where \
+			to start (and keep it within length). Not only can you come here to watch a football or a cricket match, but you can \
+			also go on tours and even visit the national sporting museum. In fact there are people who consider this place to be \
+			their second home (though I am not one of them). The best time to go to the MCG though is when there is one of the big \
+			games on (or a one day international game of cricket where people seem to dress up in the craziest costumes and chug \
+			enormous amounts of beer). It certainly is a place that I would highly recommend for anybody passing through Melbourne, \
+			specially at the height of the football season.',0)")
+	except pymysql.Error as e:
+		print("Error: ",e)
+
+	try:
+		cur.execute("INSERT INTO rating(x_coord, y_coord, username, liked, review, translated) VALUES \
+			(-37.819963, 144.983313, 'CarltonFan',0,'I hate this place! Everything I come here to watch a match, my team loses',0)")
+	except pymysql.Error as e:
+		print("Error: ",e)
+
+	try:
+		cur.execute("INSERT INTO rating(x_coord, y_coord, username, liked, review, translated) VALUES \
+			(-37.819963, 144.983313, 'EddieMan',1,'Good old Collingwood forever!',0)")
+	except pymysql.Error as e:
+		print("Error: ",e)
+
+	try:
+		cur.execute("INSERT INTO rating(x_coord, y_coord, username, liked, review, translated) VALUES \
+			(-37.819963, 144.983313, 'YankieDoodle',1,'Pretty awesome sporting ground. Great atmosphere, and easy to get around\
+			They don\\'t have reserved seating, which is pretty awesome, and the food\\'s pretty good as well. Yeah, I love this stadium.',0)")
+	except pymysql.Error as e:
+		print("Error: ",e)
+
+	conn.commit()
+"""
