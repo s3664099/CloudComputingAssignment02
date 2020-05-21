@@ -563,6 +563,12 @@ class View_Place(BaseHandler):
             }
             reviews.append(review_details)
 
+        userKey = self.session.get('user')
+
+        if (userKey != None):
+            user_key = ndb.Key("User", userKey)
+            user = user_key.get()
+            template_values['user'] = user.firstName
 
         template_values['location'] = location
         template_values['longitude'] = place.lng

@@ -14,47 +14,69 @@
     	<img id = "title-map" src = "https://storage.googleapis.com/map-icons-cca02/Images/bcmtitle.png?authuser=2" alt="Beer & Coffee Maps"/>
     </div>
     <div>
-      <form action='/review' method="GET" id = "selection_box">
+
+       <!-- The backend needs to be pulled out, meaning that this will need to be rewritten-->
+       {% if user is defined%}
+        <span id="sign-in">
+            <form class = "Sign-In-Button" action="\signout"><input id = "lang_button" type="submit" value="{{main_page.signout}}"></form>
+            <form class = "Sign-In-Button" action="\addplace"><input id = "lang_button" type="submit" value = "{{main_page.addplace}}"></form>  
+        </span><p id="signInStatus">Signed in as: {{user}}</p>
+
+
+      <form action='/review' method="GET" id = "lang_button">
         <input hidden=true name="latitude" value="{{latitude}}">
         <input hidden=true name="longitude" value="{{longitude}}">
         <input type=submit value="Review Place">
-      </form>      
-      <form action = '/back' id="lang">
-        <input type='submit' value = 'Back to Maps'>
+      </form>     
+      {% else %}
+
+        <!-- Put it back as main page as from the first page, based on translation-->
+        <span id="sign-in">
+            <form action="\signup"><input id = "lang_button" type="submit" value="Sign Up"></form>
+          <form action="\login"><input id = "lang_button" type="submit" value="Login"></form>
+        </span>
+        <span id="signInStatus">Not signed in.</span>
+    {% endif %}
+
+      <span id="lang">
+      <form action = '/back'>
+        <input type='submit' id="lang_button" value = 'Back to Maps'>
       </form>
+    </span>
     </div>
   	</div>
 
-  	<div id="topBar" class="main_screen">
+  	<div id="topBar" id = "mainBox" class="main_screen">
 
       <div id = "infoBox">
+        <div id = "details">
   		  <h1>{{location.name}}</h1>
 
-        <img src = "https://storage.googleapis.com/maps-place-images/Images/{{location.picture}}" height = "500"  width = "600" alt = "{{location.name}} picture">
+        <img id = "main_pic" src = "https://storage.googleapis.com/maps-place-images/Images/{{location.picture}}" alt = "{{location.name}} picture">
 
-        <div d = "placeDetails"> 
+        <div id = "placeDetails"> 
     		  <b>Address: </b>{{location.address}}</br>
         </div>
         {% if location.telephone != "Nil" %}
-          <div d = "placeDetails"> 
+          <div id = "placeDetails"> 
      		    <b>Phone: </b>{{location.telephone}}</br>
           </div>
         {% endif %}
         {% if location.telephone != "Nil" %}       
-          <div d = "placeDetails"> 
-    	   	  <b id = "placeDetails">Website: </b><a href="https://{{location.website}}" target = "_blank">{{location.website}}</a></br>
+          <div id = "placeDetails"> 
+    	   	  <b>Website: </b><a href="https://{{location.website}}" target = "_blank">{{location.website}}</a></br>
           </div>
         {% endif %}
-
-        <h2 id = "descriptionTitle">Description</h2></br>
-   		  {{location.description}}
+        </div>
+        <h2>Description</h2></br>
+   		  <p>{{location.description}}</p>
       </div>
-
-      <h2 id = "descriptionTitle">User Reviews</h2></br>
+      <h2>User Reviews</h2></br>
       {% for review in reviews%}
+      <div id = "review">
         <div><h3>{{review.username}}</h3></div>
-        <p>{{review.review}}</p>
-
+        <p id = "userReview">{{review.review}}</p>
+      </div>
       {% endfor %}
   	</div>
   </body>

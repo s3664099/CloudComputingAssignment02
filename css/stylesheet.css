@@ -32,7 +32,7 @@ form {
 	background-color: #d6d6c2
 }
 
-select#lang_button option[value="en"]   { background-image:url(https://storage.cloud.google.com/map-icons-cca02/Images/bb92a9985e8defd0bbc75820ab7829c0.jpg);   }
+select#lang_button option[value="en"]  { background-image:url(https://storage.cloud.google.com/map-icons-cca02/Images/bb92a9985e8defd0bbc75820ab7829c0.jpg);   }
 select#lang_button option[value="de"] { background-image:url(https://storage.cloud.google.com/map-icons-cca02/Images/germany-flag-icon-free-download.jpg); }
 select#lang_button option[value="it"] { background-image:url(https://storage.cloud.google.com/map-icons-cca02/Images/france-flag-icon-free-download.jpg); }
 select#lang_button option[value="fr"] { background-image:url(https://storage.cloud.google.com/map-icons-cca02/Images/italy-flag-icon-free-download.jpg); }
@@ -108,4 +108,5 @@ html, body {
 	padding: 20 px; 
 	border-color: #333300; 
 	background-color: #ffffcc;
+	padding-bottom: 10px;
 }
