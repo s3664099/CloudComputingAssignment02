@@ -297,7 +297,16 @@ def extraTables(conn):
 def testQuery(conn):
 	cur = conn.cursor()
 
+
+
 	"""
+Foresters Hall -37.806234 144.983127
+Burnside -37.806201 144.982761
+Fitzroy Beer Garden, the -37.806186 144.982441
+South of Johnston -37.806009 144.984551
+Pixel Alley -37.805923 144.982637
+Plug Nickle -37.805181 144.983836
+
 	try:
 		cur.execute("UPDATE place SET picture = 'MCG.JPG' WHERE x_coord = -37.819963 AND y_coord = 144.983313")
 	except pymysql.Error as e:

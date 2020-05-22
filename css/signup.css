@@ -1,0 +1,42 @@
+h1 {
+	display: inline;
+	text-align: center;
+	border-style: double;
+	padding-left: 20px;
+	padding-right: 20px;
+	margin-left: 25%
+}
+
+#topBar {
+	padding: 20px
+}
+
+#back_button {
+	margin-bottom: 0px
+}
+
+#button_level {
+	margin-bottom: 20px;
+}
+
+#signup_form {
+	display: block;
+	margin-top: 20px;
+}
+
+#error {
+	font-weight: bold;
+	border-style: solid;
+	padding: 5px;
+	color: #2e0103;
+	border-color: black;
+	background-color: #ed9398;
+}
+
+#label {
+	margin-top: 10px
+}
+
+#bottom {
+	padding-bottom: 25%
+}

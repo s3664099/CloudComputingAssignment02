@@ -304,13 +304,25 @@ class database_utils:
 
 	def get_Place_Info(self, lat, lng):
 		cur = self.db.cursor()
-		query = "SELECT localeName, address, email, telephone, website, description, picture \
+		query = "SELECT localeName, address, email, telephone, website, description, picture, localtype \
 				FROM place WHERE x_coord = '" + str(lat) + "' AND y_coord = '" + str(lng) + "';"
 		cur.execute(query)
 		results = cur.fetchall()
 		return results
 
+	def get_pub_info(self, lat, lng):
+		cur = self.db.cursor()
+		query = "SELECT craftBeerGood, craftBeerOkay, beerGardenY, beerGardenN, rooftopDeckY, rooftopDeckN, \
+				pokiesLots, pokiesLotsFew, pokiesNone, sportsBarY, sportsBarN, atmosphereTacky, atmosphereGrungy, atmosphereHip, \
+				atmosphereTrendy, animalPermittedY, animalPermittedN FROM infoBar WHERE x_coord = '" + str(lat) + "' AND y_coord = '" + str(lng) + "';"
+		cur.execute(query)
+		results = cur.fetchall()
+		return results
 
-
-
-
+	def get_cafe_info(self, lat, lng):
+		cur = self.db.cursor()
+		query = "SELECT coffeeGood, coffeeOkay, coffeeBad, teaStrong, teaGood, teaBad, teaPotBig, teaPotSmall, teaPotCup, \
+				sugarGood, sugarBad, keepCupDiscountY, keepCupDiscountN FROM infoCafe WHERE x_coord = '" + str(lat) + "' AND y_coord = '" + str(lng) + "';"
+		cur.execute(query)
+		results = cur.fetchall()
+		return results

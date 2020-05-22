@@ -1,10 +1,9 @@
 h1 {
-	display: inline;
+	display: block;
 	text-align: center;
 	border-style: double;
 	padding-left: 20px;
 	padding-right: 20px;
-	margin-left: 25%
 }
 
 h2 {
