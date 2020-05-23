@@ -108,14 +108,14 @@ def createTables(conn):
 		print("Error rating: ",e)
 
 	try:
-		cur.execute("CREATE TABLE info(x_coord DECIMAL (9,6), y_coord DECIMAL, accessGood INT, accessBad INT,\
+		cur.execute("CREATE TABLE info(x_coord DECIMAL (9,6), y_coord DECIMAL (9,6), accessGood INT, accessBad INT,\
 					serviceAnimalYes INT, serviceAnimalNo INT, PRIMARY KEY (x_coord, y_coord),\
 					FOREIGN KEY (x_coord, y_coord) REFERENCES place(x_coord, y_coord))")
 	except pymysql.Error as e:
 		print("Error info: ",e)
 
 	try:
-		cur.execute("CREATE TABLE infoBar(x_coord DECIMAL (9,6), y_coord DECIMAL, craftBeerGood INT, craftBeerOkay INT\
+		cur.execute("CREATE TABLE infoBar(x_coord DECIMAL (9,6), y_coord DECIMAL (9,6), craftBeerGood INT, craftBeerOkay INT\
 					, craftBeerNone INT, beerGardenY INT, beerGardenN INT, rooftopDeckY INT, rooftopDeckN INT,\
 					pokiesLots INT, pokiesLotsFew INT, pokiesNone INT, sportsBarY INT, sportsBarN INT,\
 					atmosphereTacky INT, atmosphereGrungy INT, atmosphereHip INT, atmosphereTrendy INT,\
@@ -125,7 +125,7 @@ def createTables(conn):
 		print("Error infobar: ",e)
 
 	try:
-		cur.execute("CREATE TABLE infoCafe (x_coord DECIMAL (9,6), y_coord DECIMAL, coffeeGood INT, coffeeOkay INT,\
+		cur.execute("CREATE TABLE infoCafe (x_coord DECIMAL (9,6), y_coord DECIMAL (9,6), coffeeGood INT, coffeeOkay INT,\
 					coffeeBad INT, teaStrong INT, teaGood INT, teaBad INT, teaPotBig INT, teaPotSmall INT, teaPotCup INT,\
 					sugarGood INT, sugarBad INT, keepCupDiscountY INT, keepCupDiscountN INT, PRIMARY KEY (x_coord, y_coord),\
 					FOREIGN KEY (x_coord, y_coord) REFERENCES place(x_coord, y_coord))")
@@ -133,14 +133,14 @@ def createTables(conn):
 		print("Error infocafe: ",e)
 
 	try:
-		cur.execute("CREATE TABLE infoMuseum(x_coord DECIMAL (9,6), y_coord DECIMAL, entryFeeFree INT, entryFeeCheap INT,\
+		cur.execute("CREATE TABLE infoMuseum(x_coord DECIMAL (9,6), y_coord DECIMAL (9,6), entryFeeFree INT, entryFeeCheap INT,\
 					entryFeePricey INT, timeAllowedShort INT, timeAllowedMedium INT, timeAllowedLong INT,\
 					PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (x_coord, y_coord) REFERENCES place(x_coord, y_coord))")
 	except pymysql.Error as e:
 		print("Error infoMuseum: ",e)	
 
 	try:
-		cur.execute("CREATE TABLE infoTakeaway(x_coord DECIMAL (9,6), y_coord DECIMAL, valueGood INT, valueBad INT,\
+		cur.execute("CREATE TABLE infoTakeaway(x_coord DECIMAL (9,6), y_coord DECIMAL (9,6), valueGood INT, valueBad INT,\
 					chipsGood INT, chipsBad INT, containersStyrofoam INT, containersCardboard INT, containersPlastic INT,\
 					PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (x_coord, y_coord) REFERENCES place(x_coord, y_coord))")
 	except pymysql.Error as e:
@@ -221,8 +221,6 @@ def loadDataFile(conn):
 				else:
 					isOpen = False
 
-#				print(fr_description)
-#				print(fields[13])
 				if (isOpen == True):
 					cur.execute("INSERT INTO place(localename,x_coord,y_coord, address, town, state, telephone, \
 								website,currentopen, localtype, likes, dislikes, description) VALUES ('"+fields[0]+"','"+str(x_coord)+"','"+str(y_coord)+"',\
@@ -241,71 +239,45 @@ def loadDataFile(conn):
 		#This is required, otherwise the contents of the database will
 		#not be saved (interesting how none of the tutorials mentioned this)
 		conn.commit()
-
-
-def extraTables(conn):
-	cur = conn.cursor()
-
-	try:
-		cur.execute("DROP TABLE ratingBar")
-	except:
-		print("No such table as ratingBar")
-	try:
-		cur.execute("DROP TABLE ratingCafe")
-	except:
-		print("No such table as ratingCafe")
-	try:
-		cur.execute("DROP TABLE ratingMuseum")
-	except:
-		print("No such table as ratingMuseum")
-	try:
-		cur.execute("DROP TABLE ratingTakeaway")
-	except:
-		print("No such table as ratingTakeaway")
-
-	try:
-		cur.execute("CREATE TABLE ratingBar(x_coord DECIMAL (9,6), y_coord DECIMAL, username VARCHAR(30), craftBeer VARCHAR(10),\
-					beerGarden BOOLEAN, rooftopDeckY BOOLEAN, pokiesLots VARCHAR(10), sportsBarY BOOLEAN,\
-					atmosphereTacky VARCHAR(10), animalPermittedY BOOLEAN, PRIMARY KEY (x_coord, y_coord),\
-					FOREIGN KEY (x_coord, y_coord) REFERENCES place(x_coord, y_coord))")
-	except pymysql.Error as e:
-		print("Error infobar: ",e)
-
-	try:
-		cur.execute("CREATE TABLE infoCafe (x_coord DECIMAL (9,6), y_coord DECIMAL, username VARCHAR(30), coffeeGood VARCHAR(10),\
-					tea BOOLEAN, teaPot VARCHAR(10), sugar BOOLEAN, keepCupDiscount BOOLEAN, PRIMARY KEY (x_coord, y_coord),\
-					FOREIGN KEY (x_coord, y_coord) REFERENCES place(x_coord, y_coord))")
-	except pymysql.Error as e:
-		print("Error infocafe: ",e)
-
-	try:
-		cur.execute("CREATE TABLE infoMuseum(x_coord DECIMAL (9,6), y_coord DECIMAL, entryFeeFree INT, entryFeeCheap INT,\
-					entryFeePricey INT, timeAllowedShort INT, timeAllowedMedium INT, timeAllowedLong INT,\
-					PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (x_coord, y_coord) REFERENCES place(x_coord, y_coord))")
-	except pymysql.Error as e:
-		print("Error infoMuseum: ",e)	
-
-	try:
-		cur.execute("CREATE TABLE infoTakeaway(x_coord DECIMAL (9,6), y_coord DECIMAL, valueGood INT, valueBad INT,\
-					chipsGood INT, chipsBad INT, containersStyrofoam INT, containersCardboard INT, containersPlastic INT,\
-					PRIMARY KEY (x_coord, y_coord), FOREIGN KEY (x_coord, y_coord) REFERENCES place(x_coord, y_coord))")
-	except pymysql.Error as e:
-		print("Error infoTakeaway: ",e)
 		
 #This function exists to test that the contents of the database were updated sufficiently
 #Also for error handling
 def testQuery(conn):
 	cur = conn.cursor()
 
+	print("Cafe")
+	cur.execute("SELECT * FROM infoCafe")
+	print(cur.fetchall())
 
+	print("Bar")
+	cur.execute("SELECT * FROM infoBar")
+	print(cur.fetchall())
 
 	"""
-Foresters Hall -37.806234 144.983127
-Burnside -37.806201 144.982761
-Fitzroy Beer Garden, the -37.806186 144.982441
-South of Johnston -37.806009 144.984551
-Pixel Alley -37.805923 144.982637
-Plug Nickle -37.805181 144.983836
+	Foresters Hall -37.806234 144.983127
+	Burnside -37.806201 144.982761
+	Fitzroy Beer Garden, the -37.806186 144.982441
+	South of Johnston -37.806009 144.984551
+	Pixel Alley -37.805923 144.982637
+	Plug Nickle -37.805181 144.983836
+
+	try:
+		cur.execute("CREATE TABLE infoCafe (x_coord DECIMAL (9,6), y_coord DECIMAL (9,6), coffeeGood INT, coffeeOkay INT,\
+					coffeeBad INT, teaStrong INT, teaGood INT, teaBad INT, teaPotBig INT, teaPotSmall INT, teaPotCup INT,\
+					sugarGood INT, sugarBad INT, keepCupDiscountY INT, keepCupDiscountN INT, PRIMARY KEY (x_coord, y_coord),\
+					FOREIGN KEY (x_coord, y_coord) REFERENCES place(x_coord, y_coord))")
+	except pymysql.Error as e:
+		print("Error infocafe: ",e)
+
+	try:
+		cur.execute("UPDATE infoBar SET craftBeerGood = 0, craftBeerOkay = 10, craftBeerNone = 0, beerGardenY = 10, beerGardenN = 0,\
+			rooftopDeckY = 0, rooftopDeckN = 10, pokiesLots = 0, pokiesLotsFew = 0, pokiesNone = 10, sportsBarY = 0, sportsBarN = 10,\
+			atmosphereTacky = 0, atmosphereGrungy = 0, atmosphereTrendy = 0, atmosphereHip = 10, animalPermittedY = 0, animalPermittedN = 10\
+			WHERE x_coord = -37.806186 AND y_coord = 144.982441")
+	except pymysql.Error as e:
+		print("Error: ",e)		
+
+	conn.commit()
 
 	try:
 		cur.execute("UPDATE place SET picture = 'MCG.JPG' WHERE x_coord = -37.819963 AND y_coord = 144.983313")

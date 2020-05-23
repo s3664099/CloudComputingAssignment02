@@ -337,7 +337,7 @@ class SignUpPage(webapp2.RequestHandler):
                 newUser.put()
                 template = JINJA_ENVIRONMENT.get_template('login.html')
                 self.response.write(template.render(message = "Your account was created! Sign in below."))
-                sendNewAccMail("noreply@map-cc-assignment.appspotmail.com", email, firstName, surname)
+                sendNewAccMail("noreply@beercoffeemaps.com", email, firstName, surname)
             else:
                 # Display error if there is already an account.
                 emailError = "There is already an account associated with that email address."
@@ -541,8 +541,6 @@ class View_Place(BaseHandler):
         template_values = {}
         reviews = []
         _localtype = None
-        pub_info = {}
-        cafe_info = {}
 
         for localeName, address, email, telephone, website, description, picture, localtype in location_data:
             location = {
@@ -552,7 +550,8 @@ class View_Place(BaseHandler):
                 "telephone": telephone,
                 "website": website,
                 "description": description,
-                "picture" : picture
+                "picture" : picture,
+                "localtype": localtype
             }
             _localtype = localtype
 
@@ -572,22 +571,20 @@ class View_Place(BaseHandler):
             user = user_key.get()
             template_values['user'] = user.firstName
 
-        if _localtype == "pub/bar":
+        if _localtype == "Pub/Bar":
             results = db.get_pub_info(place.lat, place.lng)
-            pub_info = details.get_pub_details(results)
+            template_values['pub_info'] = details.get_pub_details(results)
             
 
-        if _localtype == "cafe":
+        if _localtype == "Cafe":
             results = db.get_cafe_info(place.lat, place.lng)
-            cafe_info = details.get_cafe_details(results)
+            template_values['cafe_info'] = details.get_cafe_details(results)
 
-
+        template_values['view_place'] = translate.view_page(language.language)
         template_values['location'] = location
         template_values['longitude'] = place.lng
         template_values['latitude'] = place.lat
         template_values['reviews'] = reviews
-        template_values['pub_info'] = pub_info
-        template_values['cafe_info'] = cafe_info
 
         template = JINJA_ENVIRONMENT.get_template('view_location.html')
         self.response.write(template.render(template_values))

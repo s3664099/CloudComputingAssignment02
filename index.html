@@ -34,35 +34,35 @@
         <form action = "\show_locations" method='post'>
             <select id = "lang_button" name = "location">
             {% if "beer" in selection%}
-            <option value = "beer" selected="selected">beer</option>
+            <option value = "beer" selected="selected">{{main_page.beer}}</option>
             {$ else %}
-            <option value = "beer">beer</option>
+            <option value = "beer">{{main_page.beer}}</option>
             {% endif %}
             {% if "coffee" in selection%}
-            <option value = "coffee" selected="selected">coffee</option>
+            <option value = "coffee" selected="selected">{{main_page.coffee}}</option>
             {% else %}
-            <option value = "coffee">coffee</option>
+            <option value = "coffee">{{main_page.coffee}}</option>
             {% endif %}
             {% if "beercoffee" in selection%}
-            <option value = "beercoffee" selected="selected">beer & coffee</option>
+            <option value = "beercoffee" selected="selected">{{main_page.beer}} & {{main_page.coffee}}</option>
             {% else %}
-            <option value = "beercoffee">beer & coffee</option>
+            <option value = "beercoffee">{{main_page.beer}} & {{main_page.coffee}}</option>
             {% endif %}
             {% if "everything" in selection%}
-            <option value = "everything" selected="selected">everything</option>
+            <option value = "everything" selected="selected">{{main_page.everything}}</option>
             {% else %}
-            <option value = "everything">everything</option>
+            <option value = "everything">{{main_page.everything}}</option>
             {% endif %}
             {% if user is defined %}
                 {% if "visited" in selection%}
-                <option value = "visited" selected="selected">places visited</option>
+                <option value = "visited" selected="selected">{{main_page.places_visited}}</option>
                 {% else %}
-                <option value = "visited">places visited</option>
+                <option value = "visited">{{main_page.places_visited}}</option>
                 {% endif %}
             {% endif %}
 
         </select>
-        <input type="submit" id="lang_button" value = "Select">
+        <input type="submit" id="lang_button" value = "{{main_page.select}}">
         </form>
 
       </span>
@@ -93,7 +93,7 @@
    	 	<input type="submit" id="lang_button" value ={{main_page.lang}}>
       </form>
       </span>
-      <span id = "counter_box">Logins Today: <span id = "counter">{{loginCount}}</span></span>    
+      <span id = "counter_box">{{main_page.logins}}: <span id = "counter">{{loginCount}}</span></span>    
 	  <p id="locationStatus"></p>
 	</div>
 

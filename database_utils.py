@@ -21,7 +21,6 @@ For more information, see the README.md.
 
 import MySQLdb
 import os
-import logging
 import trans_utils as translate
 
 class database_utils:

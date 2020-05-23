@@ -91,15 +91,41 @@ function initMap() {
 	    //https://stackoverflow.com/questions/37511911/google-maps-api-add-marker-with-form-but-getelementbyid-only-after-second-click
 
 	    marker.addListener('mouseover', function() {
-	    	infowindow.setContent("<div><h3>"+this.data.name+"</h3></div><p>"+this.data.descript
-	    		+"</p><div> <button type = 'button' onclick = 'location_submit("+this.data.x_coord+", "+this.data.y_coord+")'>View Place</button>");
+	    	infowindow.setContent("<div><h3>"+this.data.name+"</h3></div><p>"+this.data.descript);
 	    	infowindow.open(map, this);
 	    })
-	    console.log(v_buttons[i]);
 
 	    marker.addListener('mouseout', function() {
 	    	infowindow.close();
 	    })
+
+	    marker.addListener('click', function() {
+	    	var location_submit = document.createElement("form");
+			location_submit.setAttribute('method', "POST");
+			location_submit.setAttribute('action', '/View_Place');
+
+			var reviewLat = document.createElement("input");
+			reviewLat.hidden = true;
+			reviewLat.name = "latitude";
+			reviewLat.value = this.data.x_coord;
+
+			var reviewLng = document.createElement("input");
+			reviewLng.hidden = true;
+			reviewLng.name = "longitude";
+			reviewLng.value = this.data.y_coord;
+
+			var submitButton = document.createElement("input");
+			submitButton.type = "submit";
+			submitButton.value = "View Place";
+
+			location_submit.appendChild(reviewLat);
+			location_submit.appendChild(reviewLng);
+			location_submit.appendChild(submitButton);
+
+	    	document.body.appendChild(location_submit)
+	    	location_submit.submit();
+	    })
+
 	    marker.setMap(null);
 	    markers.push(marker);
 	}

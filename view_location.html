@@ -18,29 +18,28 @@
        <!-- The backend needs to be pulled out, meaning that this will need to be rewritten-->
        {% if user is defined%}
         <span id="sign-in">
-            <form class = "Sign-In-Button" action="\signout"><input id = "lang_button" type="submit" value="Sign Out"></form>
-            <form class = "Sign-In-Button" action="\addplace"><input id = "lang_button" type="submit" value = "Add Place"></form>  
-        </span><p id="signInStatus">Signed in as: {{user}}</p>
+            <form class = "Sign-In-Button" action="\signout"><input id = "lang_button" type="submit" value="{{view_place.signout}}"></form> 
+        </span><p id="signInStatus">{{view_place.yessignin}}: {{user}}</p>
 
 
       <form action='/review' method="GET" id = "lang_button">
         <input hidden=true name="latitude" value="{{latitude}}">
         <input hidden=true name="longitude" value="{{longitude}}">
-        <input type=submit value="Review Place">
+        <input type=submit value="{{view_place.reviewlocation}}">
       </form>     
       {% else %}
 
         <!-- Put it back as main page as from the first page, based on translation-->
         <span id="sign-in">
-            <form action="\signup"><input id = "lang_button" type="submit" value="Sign Up"></form>
-          <form action="\login"><input id = "lang_button" type="submit" value="Login"></form>
+            <form action="\signup"><input id = "lang_button" type="submit" value="{{view_place.signup}}"></form>
+          <form action="\login"><input id = "lang_button" type="submit" value="{{view_place.login}}"></form>
         </span>
-        <span id="signInStatus">Not signed in.</span>
+        <span id="signInStatus">{{view_place.nosignin}}</span>
     {% endif %}
 
       <span id="lang">
       <form action = '/back'>
-        <input type='submit' id="lang_button" value = 'Back to Maps'>
+        <input type='submit' id="lang_button" value = '{{view_place.back}}'>
       </form>
     </span>
     </div>
@@ -55,92 +54,95 @@
         <img id = "main_pic" src = "https://storage.googleapis.com/maps-place-images/Images/{{location.picture}}" alt = "{{location.name}} picture">
 
         <div id = "placeDetails"> 
-    		  <b>Address: </b>{{location.address}}</br>
+    		  <b>{{view_place.address}}: </b>{{location.address}}</br>
         </div>
         {% if location.telephone != "Nil" %}
           <div id = "placeDetails"> 
-     		    <b>Phone: </b>{{location.telephone}}</br>
+     		    <b>{{view_place.phone}}: </b>{{location.telephone}}</br>
           </div>
         {% endif %}
         {% if location.telephone != "Nil" %}       
           <div id = "placeDetails"> 
-    	   	  <b>Website: </b><a href="https://{{location.website}}" target = "_blank">{{location.website}}</a></br>
+    	   	  <b>{{view_place.website}}: </b><a href="https://{{location.website}}" target = "_blank">{{location.website}}</a></br>
           </div>
         {% endif %}
         </div>
-        <div>
+        <div id = "info_box">
+
           {% if pub_info is defined%}
             {% if pub_info.Craft_Beer == true %}
-            craft beer
+            <span id = "info">{{view_place.craft_beer}}</span>
             {% endif %}
             {% if pub_info.Beer_Garden == true %}
-            beer garden
+            <span id = "info">{{view_place.beer_garden}}</span>
             {% endif %}
             {% if pub_info.roof_top_deck == true %}
-            roof top deck
+            <span id = "info">{{view_place.rooftop_deck}}</span>
             {% endif %}
             {% if pub_info.pokies == 0 %}
-            Lots of Pokies
+            <span id = "info">{{view_place.pokies_lots}}</span>
             {% endif %}
             {% if pub_info.pokies == 1 %}
-            A few pokies
+            <span id = "info">{{view_place.pokies_few}}</span>
             {% endif %}
             {% if pub_info.sports_bar == true %}
-            sports bar
+            <span id = "info">{{view_place.pokies_none}}</span>
             {% endif %}
             {% if pub_info.atmosphere == 0 %}
-            atmosphere: tacky
+            <span id = "info">{{view_place.tacky_atmosphere}}</span>
             {% endif %}
             {% if pub_info.atmosphere == 1 %}
-            atmosphere: grungy
+            <span id = "info">{{view_place.grungy_atmosphere}}</span>
             {% endif %}
             {% if pub_info.atmosphere == 2 %}
-            atmosphere: hip
+            <span id = "info">{{view_place.hip_atmosphere}}</span>
             {% endif %}                        
             {% if pub_info.atmosphere == 3 %}
-            atmosphere: trendy
+            <span id = "info">{{view_place.trendy_atmosphere}}</span>
             {% endif %}
             {% if pub_info.animal_permitted == true %}
-            animals permitted
+            <span id = "info">{{view_place.animals}}</span>
             {% endif %}
-          {% elif cafe_info is defined %}
+          {% endif %}  
+          {% if cafe_info is defined %}
             {% if cafe_info.coffee == 0 %}
-            great coffee
+            <span id = "info">{{view_place.great_coffee}}</span>
             {% elif cafe_info.coffee == 1 %}
-            good coffee
+            <span id = "info">{{view_place.good_coffee}}</span>
             {% else %}
-            bad coffee
+            <span id = "info">{{view_place.bad_coffee}}</span>
             {% endif %}
             {% if cafe_info.tea == 0 %}
-            strong tea
+            <span id = "info">{{view_place.strong_tea}}</span>
             {% elif cafe_info.tea == 1 %}
-            good tea
+            <span id = "info">{{view_place.good_tea}}</span>
             {% elif cafe_info.tea == 2 %}
-            bad tea
+            <span id = "info">{{view_place.bad_tea}}</span>
             {% endif %}            
             {% if cafe_info.tea_pot == 0 %}
-            big teapot
+            <span id = "info">{{view_place.big_teapot}}</span>
             {% elif cafe_info.tea_pot == 1 %}
-            small teapot
+            <span id = "info">{{view_place.small_teapot}}</span>
             {% elif cafe_info.tea_pot == 2 %}
-            tea cup only
+            <span id = "info">{{view_place.tea_cup}}</span>
             {% else %}
-            doesn't do tea
+            <span id = "info">{{view_place.no_tea}}</span>
             {% endif %}
             {% if cafe_info.coffee == true %}
-            good sugar
+            <span id = "info">{{view_place.good_sugar}}</span>
             {% else %}
-            bad sugar
+            <span id = "info">{{view_place.bad_sugar}}</span>
             {% endif %} 
             {% if cafe_info.keep_cup == true %}
-            keep-cup discount
+            <span id = "info">{{view_place.keep_cup}}</span>
             {% endif %}                       
-          {% endif %}          
-
-        <h2>Description</h2></br>
+          {% endif %}
+      </div>          
+      <div>
+        <h2>{{view_place.description}}</h2></br>
    		  <p>{{location.description}}</p>
       </div>
-      <h2>User Reviews</h2></br>
+      <h2>{{view_place.reviews}}</h2></br>
       {% for review in reviews%}
       <div id = "review">
         <div><h3>{{review.username}}</h3></div>
