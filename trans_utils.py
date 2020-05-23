@@ -55,6 +55,13 @@ def main_page(language):
 		nosignin = "Nicht eingeloggt"
 		yessignin = "Eingeloggt als"
 		lang = "Sprache"
+		logins = "Anmeldungen heute"
+		everything = "Alles"
+		select = u"w\xe4hlen"
+		beer = "Bier"
+		coffee = "Kaffee"
+		lock_location = "speicherort sperren"
+
 	elif language == 'fr':
 		login = "S'identifier"
 		signup = "S'inscrire"
@@ -64,6 +71,13 @@ def main_page(language):
 		nosignin = u"Pas connect\xe9"
 		yessignin = u"Connect\xe9 en tant que"
 		lang = "Langue"
+		logins = u"Se connecter aujourd\xe9hui"
+		everything = "Tout"
+		select = u"s\xe9lectionner"
+		beer = u"bi\xe8re"
+		coffee = u"caf\xe9"
+		lock_location = "Emplacement du verrou"
+
 	elif language == 'it':
 		login = "Accesso"
 		signup = "Iscriviti"
@@ -73,6 +87,13 @@ def main_page(language):
 		nosignin = "Non registrato"
 		yessignin = "Accesso come"
 		lang = "linguaggio"
+		logins = "Accedi oggi"
+		everything = "Qualunque cosa"
+		select = "Selezionare"
+		beer = "birra"
+		coffee = u"caff\xe8"
+		lock_location = "Blocca posizione"
+
 	else:
 		login = "Login"
 		signup = "Sign Up"
@@ -82,6 +103,12 @@ def main_page(language):
 		nosignin = "Not signed in"
 		yessignin = "Signed in as"
 		lang = "Language"
+		logins = "logins today"
+		everything = "everything"
+		select = "select"
+		beer = "birra"
+		coffee = "coffee"
+		lock_location = "lock location"
 
 
 	main_page = {
@@ -92,6 +119,12 @@ def main_page(language):
 		"reviewlocation": reviewlocation,
 		"nosignin": nosignin,
 		"yessignin": yessignin,
+		"logins": logins,
+		"everything": everything,
+		"select": select,
+		"beer": beer,
+		"coffee": coffee,
+		"lock_location": lock_location,
 		"lang": lang,
 		"lang_set": language
 	}

@@ -68,6 +68,75 @@
           </div>
         {% endif %}
         </div>
+        <div>
+          {% if pub_info is defined%}
+            {% if pub_info.Craft_Beer == true %}
+            craft beer
+            {% endif %}
+            {% if pub_info.Beer_Garden == true %}
+            beer garden
+            {% endif %}
+            {% if pub_info.roof_top_deck == true %}
+            roof top deck
+            {% endif %}
+            {% if pub_info.pokies == 0 %}
+            Lots of Pokies
+            {% endif %}
+            {% if pub_info.pokies == 1 %}
+            A few pokies
+            {% endif %}
+            {% if pub_info.sports_bar == true %}
+            sports bar
+            {% endif %}
+            {% if pub_info.atmosphere == 0 %}
+            atmosphere: tacky
+            {% endif %}
+            {% if pub_info.atmosphere == 1 %}
+            atmosphere: grungy
+            {% endif %}
+            {% if pub_info.atmosphere == 2 %}
+            atmosphere: hip
+            {% endif %}                        
+            {% if pub_info.atmosphere == 3 %}
+            atmosphere: trendy
+            {% endif %}
+            {% if pub_info.animal_permitted == true %}
+            animals permitted
+            {% endif %}
+          {% elif cafe_info is defined %}
+            {% if cafe_info.coffee == 0 %}
+            great coffee
+            {% elif cafe_info.coffee == 1 %}
+            good coffee
+            {% else %}
+            bad coffee
+            {% endif %}
+            {% if cafe_info.tea == 0 %}
+            strong tea
+            {% elif cafe_info.tea == 1 %}
+            good tea
+            {% elif cafe_info.tea == 2 %}
+            bad tea
+            {% endif %}            
+            {% if cafe_info.tea_pot == 0 %}
+            big teapot
+            {% elif cafe_info.tea_pot == 1 %}
+            small teapot
+            {% elif cafe_info.tea_pot == 2 %}
+            tea cup only
+            {% else %}
+            doesn't do tea
+            {% endif %}
+            {% if cafe_info.coffee == true %}
+            good sugar
+            {% else %}
+            bad sugar
+            {% endif %} 
+            {% if cafe_info.keep_cup == true %}
+            keep-cup discount
+            {% endif %}                       
+          {% endif %}          
+
         <h2>Description</h2></br>
    		  <p>{{location.description}}</p>
       </div>

@@ -53,11 +53,14 @@
             {% else %}
             <option value = "everything">everything</option>
             {% endif %}
-            {% if "visited" in selection%}
-            <option value = "visited" selected="selected">places visited</option>
-            {% else %}
-            <option value = "visited">places visited</option>
+            {% if user is defined %}
+                {% if "visited" in selection%}
+                <option value = "visited" selected="selected">places visited</option>
+                {% else %}
+                <option value = "visited">places visited</option>
+                {% endif %}
             {% endif %}
+
         </select>
         <input type="submit" id="lang_button" value = "Select">
         </form>

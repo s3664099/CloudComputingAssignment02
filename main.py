@@ -25,11 +25,9 @@ import webapp2
 import jinja2
 import database_utils as database
 import logging
-import math
-import requests
-import json
 from datetime import datetime 
 import trans_utils as translate 
+import get_details as details
 
 from webapp2_extras import sessions
 from google.cloud import bigquery
@@ -576,131 +574,13 @@ class View_Place(BaseHandler):
 
         if _localtype == "pub/bar":
             results = db.get_pub_info(place.lat, place.lng)
-
-            for craftBeerGood, craftBeerOkay, beerGardenY, beerGardenN, rooftopDeckY, rooftopDeckN, pokiesLots, pokiesLotsFew, pokiesNone, sportsBarY, sportsBarN, atmosphereTacky, atmosphereGrungy, atmosphereHip, atmosphereTrendy, animalPermittedY, animalPermittedN in results:
-
-                craftBeer = False
-
-                if craftBeerGood > craftBeerOkay:
-                    craftBeer = True
-
-                beerGarden = False
-
-                if beerGardenY > beerGardenN:
-                    beerGarden = True
-
-                rooftopDeck = False
-
-                if rooftopDeckY > rooftopDeckN:
-                    rooftopDeck = True
-
-                pokies = 0
-                pokies_numbers = pokiesLots
-
-                if pokiesLots < pokiesLotsFew:
-                    pokies = 1
-                    pokies_numbers = pokiesLotsFew
-
-                if pokies_numbers < pokiesNone:
-                    pokies = 2
-
-                sportsBar = False
-
-                if sportsBarY > sportsBarN:
-                    sportsBar = True
-
-                atmosphere = 0
-                atmosphereNumber = atmosphereTacky
-
-                if atmosphereTacky < atmosphereGrungy:
-                    atmosphere = 1
-                    atmosphereNumber = atmosphereGrungy
-
-                if atmosphereNumber < atmosphereHip:
-                    atmosphereHip = 2
-                    atmosphereNumber = atmosphereHip
-
-                if atmosphereNumber < atmosphereTrendy:
-                    atmosphere = 3
-
-                animal = False
-
-                if animalPermittedY > animalPermittedN:
-                    animalPermitted = True
-
-                pub_info = {
-                    "Craft_Beer": craftBeer,
-                    "Beer_Garden": beerGarden,
-                    "roof_top_deck": rooftopDeck,
-                    "pokies": pokies,
-                    "sports_bar": sportsBar,
-                    "atmosphere": atmosphere,
-                    "animal_permitted": animalPermitted
-                }
-
-
-
-"""
-        cur.execute("CREATE TABLE infoCafe (x_coord DECIMAL (9,6), y_coord DECIMAL, coffeeGood INT, coffeeOkay INT,\
-                    coffeeBad INT, teaStrong INT, teaGood INT, teaBad INT, teaPotBig INT, teaPotSmall INT, teaPotCup INT,\
-                    sugarGood INT, sugarBad INT, keepCupDiscountY INT, keepCupDiscountN INT, PRIMARY KEY (x_coord, y_coord),\
-                    FOREIGN KEY (x_coord, y_coord) REFERENCES place(x_coord, y_coord))")
-"""
-
-
+            pub_info = details.get_pub_details(results)
+            
 
         if _localtype == "cafe":
             results = db.get_cafe_info(place.lat, place.lng)
+            cafe_info = details.get_cafe_details(results)
 
-            for coffeeGood, coffeeOkay, coffeeBad, teaStrong, teaGood, teaBad, teaPotBig, teaPotSmall, teaPotCup, sugarGood, sugarBad, keepCupDiscountY, keepCupDiscountN in results:
-
-                coffee = 0
-                _coffee = coffeeGood
-
-                if coffeeGood < coffeeOkay:
-                    coffee = 1
-                    _coffee = coffeeOkay
-
-                if _coffee < coffeeBad:
-                    coffee = 2
-
-                tea = 0
-                _tea = teaStrong
-
-                if teaStrong < teaGood:
-                    tea = 1
-                    _tea = teaGood
-
-                if _tea < teaBad:
-                    tea = 2
-
-                teaPot = 0
-                _teaPot = teaPotBig
-
-                if teaPotBig < teaPotSmall:
-                    teaPot = 1
-                    _teaPot = teaPotSmall
-
-                if _teaPot < teaPotCup:
-                    teaPot = 2
-
-                sugar = False
-
-                if sugarGood > sugarBad:
-                    sugar = True
-
-                keepCup = False
-
-                if keepCupDiscountY > keepCupDiscountN:
-                    keepCup = True
-
-                cafe_info = {
-                    "coffee": coffee,
-                    "tea": tea,
-                    "tea_pot": teaPot,
-                    "sugar": sugar,
-                    "keep_cup": keep_cup
-                }
 
         template_values['location'] = location
         template_values['longitude'] = place.lng
