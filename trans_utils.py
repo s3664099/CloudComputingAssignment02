@@ -301,6 +301,7 @@ def view_page(language):
 		"yessignin": yessignin,
 		"back": back,
 		"address": address,
+		"phone": phone,
 		"website": website,
 		"craft_beer": craft_beer,
 		"beer_garden": beer_garden,

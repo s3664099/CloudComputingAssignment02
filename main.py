@@ -337,7 +337,7 @@ class SignUpPage(webapp2.RequestHandler):
                 newUser.put()
                 template = JINJA_ENVIRONMENT.get_template('login.html')
                 self.response.write(template.render(message = "Your account was created! Sign in below."))
-                sendNewAccMail("noreply@beercoffeemaps.com", email, firstName, surname)
+                sendNewAccMail("noreply@map-cc-assignment.appspotmail.com", email, firstName, surname)
             else:
                 # Display error if there is already an account.
                 emailError = "There is already an account associated with that email address."
@@ -380,6 +380,7 @@ class Review(BaseHandler):
 
         lat = self.request.get('latitude')
         lng = self.request.get('longitude')
+        review = self.request.get('review')        
 
         if (lat == None or lng == None):
             template = JINJA_ENVIRONMENT.get_template("review.html")
@@ -396,20 +397,19 @@ class Review(BaseHandler):
             else:
                 trueLiked = 0
 
-            review = self.request.get('review')
             userKey = self.session.get('user')
             user_key = ndb.Key("User", userKey)
             user = user_key.get()
 
-            try:
-                db.addReview(lat, lng, userKey, user.firstName, user.surname, liked, review)
-                template = JINJA_ENVIRONMENT.get_template("review.html")
-                reviews = db.getReviews(lat, lng)
-                self.response.write(template.render(message = "Review successfully submitted!", reviews = reviews, latitude = lat, longitude = lng))
-            except:
-                template = JINJA_ENVIRONMENT.get_template("review.html")
-                reviews = db.getReviews(lat, lng)
-                self.response.write(template.render(message = "You've already submitted a review for this location!", reviews = reviews, latitude = lat, longitude = lng))
+            #try:
+            db.addReview(lat, lng, userKey, user.firstName, user.surname, liked, review)
+            template = JINJA_ENVIRONMENT.get_template("review.html")
+            reviews = db.getReviews(lat, lng)
+            self.response.write(template.render(message = "Review successfully submitted!", reviews = reviews, latitude = lat, longitude = lng))
+            #except:
+            #    template = JINJA_ENVIRONMENT.get_template("review.html")
+            #    reviews = db.getReviews(lat, lng)
+            #    self.response.write(template.render(message = "You've already submitted a review for this location!", reviews = reviews, latitude = lat, longitude = lng))
         else:
             template = JINJA_ENVIRONMENT.get_template("review.html")
             reviews = db.getReviews(lat, lng)

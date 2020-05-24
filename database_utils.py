@@ -158,6 +158,8 @@ class database_utils:
 		else:
 			liked = 0
 
+		name = firstName + " " + surname
+
 		"""	
 		descriptions = translate.get_description(review)
 
@@ -166,9 +168,8 @@ class database_utils:
 			'"+descriptions["italian"]+"', '"+descriptions["german"]+"','"+descriptions["french"]+"','"+descriptions["english"]+"');"
 		"""
 
-		query = "INSERT into rating(x_coord, y_coord, username, firstName, surname, liked, review) \
-			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + username + "', '" + firstName + "', '" \
-			+ surname + "', '" + str(liked) + "', '" + review + "');"
+		query = "INSERT into rating(x_coord, y_coord, username, liked, review) \
+			VALUES ('" + str(lat) + "', '" + str(lng) + "', '"  + name + "', '" + str(liked) + "', '" + review + "');"
 
 		cur.execute(query)
 		self.db.commit()

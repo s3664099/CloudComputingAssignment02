@@ -245,13 +245,14 @@ def loadDataFile(conn):
 def testQuery(conn):
 	cur = conn.cursor()
 
-	print("Cafe")
-	cur.execute("SELECT * FROM infoCafe")
-	print(cur.fetchall())
+	cur.execute("DELETE FROM rating WHERE username = 'David Sarkies'")
+	conn.commit()
 
-	print("Bar")
-	cur.execute("SELECT * FROM infoBar")
-	print(cur.fetchall())
+	cur.execute("SELECT * FROM rating WHERE username = 'David Sarkies'")
+
+	for x in cur.fetchall():
+		print(x)
+
 
 	"""
 	Foresters Hall -37.806234 144.983127

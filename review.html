@@ -34,7 +34,7 @@
                 <input type="radio" id="likedNo" name="liked" value="No">
                 <label for="likedNo">No</label><br>
                 <label>Your Review:</label><br>
-                <textarea name="review" form="placeForm" rows="8" cols = "60"></textarea><br>
+                <textarea name="review" rows="8" cols = "60"></textarea><br>
                 <input type="submit" value="Submit">
             </form>
             <h2>Reviews</h2>
@@ -42,7 +42,7 @@
                 <div>
                     {% for review in reviews %}
                         <div id = "review">
-                        <h3>Author: {{review[10]}} {{review[11]}}</h3>
+                        <h3>Author: {{review[2]}}</h3>
                         {%if review[3] == 1%}
                             <p><span>Liked:</span> Yes</p>
                         {% else %}
