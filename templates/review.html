@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <title>Beer and Coffee Maps</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="css/stylesheet.css">
+    <link rel="stylesheet" type="text/css" href="css/signup.css">
+    <link rel="stylesheet" type="text/css" href="css/reviewplace.css">   
+  </head>
+  <body>
+    <div id="topBar">
+    <div>
+        <img id = "title-map" src = "https://storage.googleapis.com/map-icons-cca02/Images/bcmtitle.png?authuser=2" alt="Beer & Coffee Maps"/>
+    </div>
+    <div id = "button_level">
+      <span id="lang">
+      <form action = '/back' id = "back_button">
+        <input type='submit' id="lang_button" value = 'Back to Maps'>
+      </form>
+    </span>
+    </div>
+    </div>
+    <div id="topBar" id = "mainBox" class="main_screen">
+            <h1>Write Review</h1>
+            <div>{{message}}</div>
+            <div id="placeForm">
+            <form method="POST" action = "/review" id="placeForm"></div>
+                <h3>Did you like this location?</h3><br>
+                <input hidden=true name="latitude" value="{{latitude}}">
+                <input hidden=true name="longitude" value="{{longitude}}">
+                <input type="radio" id="likedYes" name="liked" value="Yes">
+                <label for="likedYes">Yes</label><br>
+                <input type="radio" id="likedNo" name="liked" value="No">
+                <label for="likedNo">No</label><br>
+                <label>Your Review:</label><br>
+                <textarea name="review" rows="8" cols = "60"></textarea><br>
+                <input type="submit" value="Submit">
+            </form>
+            <h2>Reviews</h2>
+            {% if reviews is defined and reviews|length > 0 %}
+                <div>
+                    {% for review in reviews %}
+                        <div id = "review">
+                        <h3>Author: {{review[2]}}</h3>
+                        {%if review[3] == 1%}
+                            <p><span>Liked:</span> Yes</p>
+                        {% else %}
+                            <p><span>Liked:</span> No</p>
+                        {% endif %}
+                        <p><span>Review:</span> {{review[4]}}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div>
+                    <p> No reviews. </p>
+                </div>
+            {% endif %}
+        </div>
+    <script type="text/javascript" src="js/reviewForm.js"></script>     
+    </body>
+</html>
+

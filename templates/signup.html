@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <title>Beer and Coffee Maps</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="css/stylesheet.css">
+    <link rel="stylesheet" type="text/css" href="css/signup.css">   
+  </head>
+  <body>
+    <div id="topBar">
+    <div>
+        <img id = "title-map" src = "https://storage.googleapis.com/map-icons-cca02/Images/bcmtitle.png?authuser=2" alt="Beer & Coffee Maps"/>
+    </div>
+    <div id = "button_level">
+      <span id="lang">
+      <form action = '/back' id = "back_button">
+        <input type='submit' id="lang_button" value = 'Back to Maps'>
+      </form>
+    </span>
+    </div>
+    </div>
+    <div id="topBar" id = "mainBox" class="main_screen">
+    <form action="/signup" method="post" id="signup_form">
+        <div>
+        {%if emailError is defined%}
+        <label id = "error">{{emailError}}</label><br>
+        {% endif %}
+        <div id = "label">
+        <label>Email:</label><br>
+        <input type="text" name="email"><br><br>
+        </div>
+        </div>
+
+        <div>
+        {%if firstNameError is defined%}
+        <label id = "error">{{firstNameError}}</label><br>
+        {% endif %}
+        <div id = "label">
+        <label>First Name:</label><br>
+        <input type="text" name="firstname"><br><br>
+        </div>
+        </div>
+
+        <div>
+        {%if surnameError is defined%}
+        <label id = "error">{{surnameError}}</label><br>
+        {% endif %}
+        <div id = "label">
+        <label>Surname:</label><br>
+        <input type="text" name="surname"><br><br>
+        </div>
+        </div>
+
+        <div>
+        {%if passwordError is defined%}    
+        <label id = "error">{{passwordError}}</label><br>
+        {% endif %}
+        <div id = "label">
+        <label>Password:</label><br>
+        <input type="password" name="password"><br>
+        </div>
+        </div>
+        <div>
+        <div id = "label">
+        <label>Confirm Password:</label><br>
+        <input type="password" name="confirmpassword"><br><br>
+        </div>
+        </div>
+
+        <div>
+        <input type="submit" value="Create Account">
+        </div>
+    </form>
+    
+    </div>
+</body>
+
+</html>
