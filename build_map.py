@@ -144,3 +144,4 @@ def change_locations(option):
 		show_locations.selection = "visited"
 	else:
 		show_locations.selection = "everything"
+		
