@@ -1,0 +1,3 @@
+libraries:
+- name: grpcio
+  version: 1.0.0

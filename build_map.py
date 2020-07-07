@@ -1,16 +1,11 @@
 import database_utils as database
 import trans_utils as translate
+from user import user
 
 #Establish a class to hold variables pulled from the static HTML page
 class search ():
     locale_type = "All"
     locale_place = "Sunbury"
-
-class language():
-    language = 'en'
-
-class show_locations():
-	selection = "everything"
 
 class place():
     lng = 0
@@ -18,9 +13,9 @@ class place():
 
 def get_values():
 
-	template_values = {}
+    template_values = {}
 
-	"""
+    """
     client = bigquery.Client()
     tablecode = datetime.now().strftime('%Y%m%d')
     dailyLogins = 0
@@ -29,7 +24,7 @@ def get_values():
         query = """
         #SELECT count(*) FROM `map-cc-assignment.LoginData.appengine_googleapis_com_request_log_""" + tablecode + """` 
         #where DATE(timestamp) = CURRENT_DATE LIMIT 1000;
-	"""
+    """
         query_job = client.query(query)
         results = query_job.result()
 
@@ -42,10 +37,15 @@ def get_values():
         pass
     """
 
-	if search.locale_type != "":
-		template_values = perform_search(language.language)
+    if search.locale_type != "":
+        template_values = perform_search(user.language)
 
-	"""    
+    if user.logged_in == True:
+        template_values['user'] = user.name
+    else:
+        template_values['user'] = None
+
+    """    
     userKey = self.session.get('user')
 
     if (userKey != None):
@@ -54,9 +54,9 @@ def get_values():
         template_values['user'] = user.firstName
 
     template_values['loginCount'] = dailyLogins
-	"""
+    """
 
-	return template_values
+    return template_values
 
 #This function is where all of the database searches are performed
 def perform_search(language):
@@ -72,15 +72,15 @@ def perform_search(language):
 
     db = database.database_utils()
 
-    if show_locations.selection == "visited":
+    if user.selection == "visited":
         results = db.get_all_open_locations(language)
         visited_results = db.get_all_visited()
         visited = True
-    elif show_locations.selection == "beer":
+    elif user.selection == "beer":
         results = db.get_all_open_type("place.localtype = 'Pub/Bar'", language)
-    elif show_locations.selection == "coffee":
+    elif user.selection == "coffee":
         results = db.get_all_open_type("place.localtype = 'Cafe'", language)
-    elif show_locations.selection == "beercoffee":
+    elif user.selection == "beercoffee":
         results = db.get_all_open_type("place.localtype = 'Cafe' OR place.localtype = 'Pub/Bar'", language)
     else:
         results = db.get_all_open_locations(language)
@@ -127,7 +127,7 @@ def perform_search(language):
     template_values['location_details'] = locations
     template_values['visit_selected'] = visited
     template_values['main_page'] = main_page
-    template_values['selection'] = show_locations.selection
+    template_values['selection'] = user.selection
            
     return template_values
 
@@ -135,13 +135,13 @@ def perform_search(language):
 def change_locations(option):
 
 	if option == "beer":
-		show_locations.selection = "beer"
+		user.selection = "beer"
 	elif option == "coffee":
-		show_locations.selection = "coffee"
+		user.selection = "coffee"
 	elif option == "beercoffee":
-		show_locations.selection = "beercoffee"
+		user.selection = "beercoffee"
 	elif option == "visited":
-		show_locations.selection = "visited"
+		user.selection = "visited"
 	else:
-		show_locations.selection = "everything"
+		user.selection = "everything"
 		
