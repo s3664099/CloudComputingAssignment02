@@ -5,8 +5,8 @@
     <title>Beer and Coffee Maps</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
-    <link type="text/css" rel="stylesheet" href="css/stylesheet.css">
-    <link type="text/css" rel="stylesheet" href="css/viewlocationsheet.css">    
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename = 'css/stylesheet.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename = 'css/viewlocationsheet.css')}}">    
   </head>
   <body>
   	<div id="topBar">
@@ -38,7 +38,7 @@
     {% endif %}
 
       <span id="lang">
-      <form action = '/back'>
+      <form action = '/'>
         <input type='submit' id="lang_button" value = '{{view_place.back}}'>
       </form>
     </span>

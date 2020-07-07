@@ -2,9 +2,14 @@ from flask import Flask, render_template, request
 import build_map as main_map
 import login as login
 from user import user
+import view_location as view
 
 app = Flask(__name__,
 	static_folder = 'static')
+
+class place:
+	longitude = 0
+	latitude = 0
 
 #Function to return the main map template
 def render_template_return():
@@ -73,6 +78,35 @@ def login_page():
 def sign_out():
 	user.logged_in = False
 	return render_template_return()
+
+@app.route('/View_Place', methods = ["POST","GET"])
+def view_place():
+
+	template_values = view.view_location(request.form["longitude"], request.form["latitude"])
+
+	if template_values['localtype'] == 'Pub/Bar':
+		return render_template('view_location.html',
+			view_place = template_values['view_place'],
+			location = template_values['location'],
+			longitude = place.longitude,
+			latitude = place.latitude,
+			reviews = template_values['reviews'],
+			pub_info = template_values['pub_info'])
+	elif template_values['localtype'] == 'Cafe':
+		return render_template('view_location.html',
+			view_place = template_values['view_place'],
+			location = template_values['location'],
+			longitude = place.longitude,
+			latitude = place.latitude,
+			reviews = template_values['reviews'],
+			cafe_info = template_values['cafe_info'])
+
+	return render_template('view_location.html',
+		view_place = template_values['view_place'],
+		location = template_values['location'],
+		longitude = place.longitude,
+		latitude = place.latitude,
+		reviews = template_values['reviews'])
 
 #Only used for running locally
 if __name__ == '__main__':
