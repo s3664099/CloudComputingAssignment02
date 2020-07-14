@@ -19,8 +19,8 @@
         <span id="sign-in">
             <form class = "Sign-In-Button" action="\signout"><input id = "lang_button" type="submit" value="{{main_page.signout}}"></form>
             <form class = "Sign-In-Button" action="\addplace"><input id = "lang_button" type="submit" value = "{{main_page.addplace}}"></form>  
-        </span><p id="signInStatus">{{main_page.yessignin}}: {{user}}</p>
-        <p>{{lock}}</p>
+        </span id="signInStatus">{{main_page.yessignin}}: {{user}}</span>
+        <span>{{lock}}</span>
 	  {% else %}
 
         <span id="sign-in">
@@ -100,7 +100,7 @@
     <div id="map"></div>
 
     <div id="topBar">
-    	<a href="">Sources</a>
+    	<a href="sources.html">Sources</a>
     	<a href="mailto: david.sarkies@internode.on.net">Contact Owner</a>
 
 	<!-- source: https://stackoverflow.com/questions/21956500/use-jinja2-template-engine-in-external-javascript-file -->

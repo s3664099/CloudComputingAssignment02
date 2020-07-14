@@ -21,11 +21,10 @@
             <form class = "Sign-In-Button" action="\signout"><input id = "lang_button" type="submit" value="{{view_place.signout}}"></form> 
         </span><p id="signInStatus">{{view_place.yessignin}}: {{user}}</p>
 
-
-      <form action='/review' method="GET" id = "lang_button">
-        <input hidden=true name="latitude" value="{{latitude}}">
-        <input hidden=true name="longitude" value="{{longitude}}">
-        <input type=submit value="{{view_place.reviewlocation}}">
+      <form action='/review' method="POST" id = "lang_button">
+        <input hidden='true' name="latitude" value="{{latitude}}">
+        <input hidden='true' name="longitude" value="{{longitude}}">
+        <input type='submit' value="{{view_place.reviewlocation}}">
       </form>     
       {% else %}
 

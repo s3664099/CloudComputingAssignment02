@@ -3,6 +3,8 @@ import build_map as main_map
 import login as login
 from user import user
 import view_location as view
+import sign_up as sign
+import review
 
 app = Flask(__name__,
 	static_folder = 'static')
@@ -13,8 +15,6 @@ class place:
 
 #Function to return the main map template
 def render_template_return():
-
-    print(user.logged_in)
 
     #Sets an empty dictionary to handle the template values
     #These are the values that wull be used by the HTML file
@@ -79,34 +79,117 @@ def sign_out():
 	user.logged_in = False
 	return render_template_return()
 
-@app.route('/View_Place', methods = ["POST","GET"])
+#Sign up function
+@app.route('/signup', methods = ["POST","GET"])
+def sign_up():
+
+	#Diverts user to the signup page
+	if request.method == 'GET':
+		return render_template('signup.html')
+
+	#Performs the signup function
+	elif request.method == 'POST':
+		first_name = request.form['firstname']
+		surname = request.form['surname']
+		email = request.form['email']
+		password = request.form['password']
+		confirm_password = request.form['confirmpassword']
+
+		error = sign.validate(first_name, email, password, confirm_password)
+
+		if (error['is_error'] == True):
+			return render_template('signup.html',
+				firstNameError = error['first_name_error'], 
+				emailError = error['email_error'], 
+				passwordError = error['password_error'])
+		else:
+			sign.sign_up(password, email, first_name)
+			return render_template('login.html',
+				message = 'Your account was created! Sign in below.')		
+
+@app.route('/View_Place', methods = ['POST'])
 def view_place():
 
-	template_values = view.view_location(request.form["longitude"], request.form["latitude"])
+	longitude = request.form["longitude"]
+	latitude = request.form["latitude"]
 
-	if template_values['localtype'] == 'Pub/Bar':
+	template_values = view.view_location(longitude, latitude )
+
+	if user.logged_in == True:
+		if template_values['localtype'] == 'Pub/Bar':
+			return render_template('view_location.html',
+				view_place = template_values['view_place'],
+				location = template_values['location'],
+				longitude = longitude,
+				latitude = latitude,
+				reviews = template_values['reviews'],
+				pub_info = template_values['pub_info'],
+				user = user.name)
+		elif template_values['localtype'] == 'Cafe':
+			return render_template('view_location.html',
+				view_place = template_values['view_place'],
+				location = template_values['location'],
+				longitude = longitude,
+				latitude = latitude,
+				reviews = template_values['reviews'],
+				cafe_info = template_values['cafe_info'],
+				user = user.name)
+
+		return render_template('view_location.html',
+			view_place = template_values['view_place'],
+			location = template_values['location'],
+			longitude = longitude,
+			latitude = latitude,
+			reviews = template_values['reviews'],
+			user = user.name)
+
+	else:
+		if template_values['localtype'] == 'Pub/Bar':
+			return render_template('view_location.html',
+				view_place = template_values['view_place'],
+				location = template_values['location'],
+				longitude = place.longitude,
+				latitude = place.latitude,
+				reviews = template_values['reviews'],
+				pub_info = template_values['pub_info'])
+		elif template_values['localtype'] == 'Cafe':
+			return render_template('view_location.html',
+				view_place = template_values['view_place'],
+				location = template_values['location'],
+				longitude = place.longitude,
+				latitude = place.latitude,
+				reviews = template_values['reviews'],
+				cafe_info = template_values['cafe_info'])
+
 		return render_template('view_location.html',
 			view_place = template_values['view_place'],
 			location = template_values['location'],
 			longitude = place.longitude,
 			latitude = place.latitude,
-			reviews = template_values['reviews'],
-			pub_info = template_values['pub_info'])
-	elif template_values['localtype'] == 'Cafe':
-		return render_template('view_location.html',
-			view_place = template_values['view_place'],
-			location = template_values['location'],
-			longitude = place.longitude,
-			latitude = place.latitude,
-			reviews = template_values['reviews'],
-			cafe_info = template_values['cafe_info'])
+			reviews = template_values['reviews'])
 
-	return render_template('view_location.html',
-		view_place = template_values['view_place'],
-		location = template_values['location'],
-		longitude = place.longitude,
-		latitude = place.latitude,
-		reviews = template_values['reviews'])
+@app.route('/change_language', methods = ['POST'])
+def language():
+
+	language = request.form["language"]
+	user.language = language
+	return render_template_return()
+
+@app.route('/review', methods = ["POST"])
+def review_location():
+
+	return review.get_reviews(request.form["longitude"], request.form["latitude"])
+
+@app.route('/review_submit', methods = ["POST"])
+
+def submit_review():
+
+	return review.post_review(request.form["longitude"], request.form["latitude"],
+		request.form['review'], request.form['liked'])
+
+
+
+
 
 #Only used for running locally
 if __name__ == '__main__':

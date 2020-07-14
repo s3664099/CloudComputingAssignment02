@@ -1,9 +1,19 @@
+- Create new Git Repository
+- Deploy to Cloud (and reference back to original)
+- Attach user login to datastore
+- save user info in session storage
+- reconfigure database utils as object
+- redo the method names to follow python style
+
+
 1) connect the login to the MongoDB on google cloud
 	- Only password is hashed
 	- creates an object for the user
 	- stores the object in the session storage
 	- all user related details go through this object
 	- if the session storage is empty an generic object is created to hold guest details
+	- at this stage the signup is only doing validations. Need to connect to MongoDB
+	- The code has been retained in the original python 2 file
 
 2) Build objects for the locations
 	- objects hold templates for the view_location and review
@@ -21,3 +31,22 @@
 	- State and Country names to be full names
 	- Descriptions either entered or done through wikipedia API
 	- Split the local type for some more generic types for the site, and specific ones for the icons
+
+4) Database Manager
+	- turn it into an object so that the object is called upon.
+	- Access from Review location, Add Location, and Search
+	- need to change some of the code to make it more in line with python3 standards
+
+5) Reviews
+	- change reviews so that it collects location information here
+	- build it so that it refers based on type of location
+	- if the user already has a review, it will pre-fill the information to allow the user to change
+	- have the review page display the location details such as name, address, phone, email
+	- review location returns user to view_locations and sends the message through there
+
+6) Add Place
+	- include a map to select the location and return the Longitude & Latitude
+	- Have a separate, but similar, one for update place that prefills all of the information
+
+7) View Place
+	- Have the login return to view place as opposed to main maps
