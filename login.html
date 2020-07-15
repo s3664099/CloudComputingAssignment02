@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+    <head>
+    <title>Beer and Coffee Maps</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="css/stylesheet.css">
+    <link rel="stylesheet" type="text/css" href="css/signup.css">   
+  </head>
+  <body>
+    <div id="topBar">
+    <div>
+        <img id = "title-map" src = "https://storage.googleapis.com/map-icons-cca02/Images/bcmtitle.png?authuser=2" alt="Beer & Coffee Maps"/>
+    </div>
+    <div id = "button_level">
+      <span id="lang">
+      <form action = '/back' id = "back_button">
+        <input type='submit' id="lang_button" value = 'Back to Maps'>
+      </form>
+    </span>
+    </div>
+    </div>
+    <div id="topBar" id = "mainBox" class="main_screen">
+        <div id="bottom">
+        <form action="/login" method="post" id="signup_form">
+            <div>
+            {% if message is defined %}
+            <label id = "error">{{message}}</label><br>
+            {% endif %}
+            <div id = "label">
+            <label>Email:</label><br>
+            <input type="text" name="email"><br>
+            </div>
+            </div>
+            <div id = "label">
+            <label>Password:</label><br>
+            <input type="password" name="password"><br>
+            <input type="submit" value="Sign In">
+            </div>
+        </form>
+        </div>
+    </div>
+    </body>
+</html>
+
+{% endautoescape %}

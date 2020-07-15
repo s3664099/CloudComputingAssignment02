@@ -1,0 +1,112 @@
+/* Always set the map height explicitly to define the size of the div
+ * element that contains the map. */
+body {
+	background-color: black; 
+}
+
+h3 {
+	color: blue;
+}
+
+form {
+	display: inline-flex;
+}
+
+#title-map {
+	display: inline-flex;
+	margin-left: 25%;
+	margin-right: 25%;
+}
+
+#lang {
+	margin-right: 3%;
+	float: right;
+	border-style: solid; 
+	border-width: 3px; 
+	border-color: black;
+	background-color: #d6d6c2
+}
+
+#lang_button {
+	border: none;
+	background-color: #d6d6c2
+}
+
+select#lang_button option[value="en"]  { background-image:url(https://storage.cloud.google.com/map-icons-cca02/Images/bb92a9985e8defd0bbc75820ab7829c0.jpg);   }
+select#lang_button option[value="de"] { background-image:url(https://storage.cloud.google.com/map-icons-cca02/Images/germany-flag-icon-free-download.jpg); }
+select#lang_button option[value="it"] { background-image:url(https://storage.cloud.google.com/map-icons-cca02/Images/france-flag-icon-free-download.jpg); }
+select#lang_button option[value="fr"] { background-image:url(https://storage.cloud.google.com/map-icons-cca02/Images/italy-flag-icon-free-download.jpg); }
+
+#sign-in {
+	margin-left: 3%;
+	border-style: solid; 
+	border-width: 3px; 
+	border-color: black;
+	background-color: #d6d6c2
+}
+
+#selection_box {
+	margin-left: 10%;
+	margin-right: 10%;
+	border-style: solid; 
+	border-width: 3px; 
+	border-color: black;
+	background-color: #d6d6c2
+}
+
+#counter_box {
+	float: right;
+	border-style: solid;
+	border-width: 3px;
+	border-color: #cc9900;
+	border-radius: 25px;
+	background-color: #ffdf80;
+	color: #660000;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-size: 12px;
+	margin-right: 2% 
+}
+
+#counter {
+	border-style: inset;
+	border-right-width: 3px;
+	border-left-width: 3px;
+	border-color: #006600;
+	background-color: black;
+	color: #fcec00;
+	border-top-width: 0;
+	border-bottom-width: 0;
+}
+
+#signInStatus {
+	padding-left: 3%;
+	padding-right: 3%
+}
+
+#map {
+    height: 100%;
+    border-style: inset;
+    border-color: black;
+}
+
+.main_screen {
+	bottom: 10px;
+}
+
+/* Optional: Makes the sample page fill the window. */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}  
+
+#topBar {
+	border-style: inset; 
+	border-radius: 25px; 
+	border-width: medium; 
+	padding: 20 px; 
+	border-color: #333300; 
+	background-color: #ffffcc;
+	padding-bottom: 10px;
+}

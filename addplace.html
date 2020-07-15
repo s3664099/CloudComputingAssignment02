@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <title>Beer and Coffee Maps</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <link type="text/css" rel="stylesheet" href="css/stylesheet.css">
+    <link rel="stylesheet" type="text/css" href="css/signup.css">
+    <script type="text/javascript" src="js/dynamicForm.js"></script>   
+  </head>
+  <body>
+    <div id="topBar">
+    <div>
+        <img id = "title-map" src = "https://storage.googleapis.com/map-icons-cca02/Images/bcmtitle.png?authuser=2" alt="Beer & Coffee Maps"/>
+    </div>
+    <div id = "button_level">
+      <span id="lang">
+      <form action = '/back' id = "back_button">
+        <input type='submit' id="lang_button" value = 'Back to Maps'>
+      </form>
+    </span>
+    </div>
+    </div>
+    <div id="topBar" id = "mainBox" class="main_screen">
+    	<h1>Add Place Information</h1></bt>
+        {% if place is undefined %}
+        <div>
+            <div id = "label">
+            <label>{{message}}</label><br>
+	        </div>
+	        <div id = "label">
+            <label>Place Type:</label>
+            <select id="placeType" onchange="changeForm()">
+                <option selected hidden>Choose Type!</option>
+                <option value="bar">Bar</option>
+                <option value="cafe">Cafe</option>
+                <option value="museum">Museum</option>
+                <option value="takeaway">Takeaway</option>
+            </select><br>
+            <div id = "label">
+
+            <div id="dynamicForm"></div>
+        </div>
+        </div>
+        {% else %}
+        <div>
+            <label id = "error">Place already exists! Here are it's details. </label></br>
+            {% for row in place %}
+                <p>Latitude: {{row[0]}}</p>
+                <p>Longitude: {{row[1]}}</p>
+                <p>Name: {{row[2]}}</p>
+                <p>Address: {{row[3]}}</p>
+                <p>Type: {{row[16]}}</p>
+            {% endfor %}
+        </diV>
+        {% endif %}
+    </div>
+    </body>
+</html>
+
