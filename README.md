@@ -1,16 +1,25 @@
-# Using Cloud SQL from Google App Engine
+# Beer & Coffee Maps - Cloud Computing Assignment 2
 
-[![Open in Cloud Shell][shell_img]][shell_link]
+This was the result of the second Assignment we had to complete for our Cloud Computing Course. 
+The concept behind this project was to create a maps/review style website that would iron out some of the issues that
+I have found in other similar sites. For instance, Google Maps, while still the gold standard, makes it very difficult to
+view all of the places that you have visited. Further, I have always found the reviews in Google maps to be quite lacking,
+namely because most of then end up being 5 star reviews.
+Other sites, while using maps, are not map based, which doesn't give the best overview.
 
-[shell_img]: http://gstatic.com/cloudssh/images/open-btn.png
-[shell_link]: https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/GoogleCloudPlatform/python-docs-samples&page=editor&open_in_editor=appengine/standard/cloudsql/README.md
+This project implements the following aspects of Google Cloud:
+App Engine with traffic splitter
+Google Maps API
+Cloud SQL
+Cloud Storage
+Cloud Data Store
+Big Query with lambda functions
+Google Translate, though there are issue with deprication of Python 2
+Email
 
-This is an example program showing how to use the native MySQL connections from Google App Engine to [Google Cloud SQL](https://cloud.google.com/sql).
+This project was writting using a Python 2 backend, and a Javascript/HTML front end using Django.
 
-Refer to the [App Engine Samples README](../README.md) for information on how to run and deploy this sample.
+Further details are included in the assignment report, which has been added to the repository.
 
-## Setup
 
-1. You will need to create a [Cloud SQL instance](https://cloud.google.com/sql/docs/create-instance).
 
-2. Edit the update the `env_variables` section in `app.yaml` with your Cloud SQL configuration.
